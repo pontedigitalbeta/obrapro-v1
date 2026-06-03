@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, Users, FileText, Settings, LogOut, User } from "lucide-react";
-import logoFull from "@/assets/obrapro-logo.png.asset.json";
 import logoIcon from "@/assets/obrapro-icon.png.asset.json";
 import { useEffect, useState } from "react";
 import {
