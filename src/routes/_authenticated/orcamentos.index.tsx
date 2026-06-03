@@ -8,11 +8,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { StatusBadge } from "@/components/status-badge";
 import { useStore, calcTotal, formatBRL } from "@/lib/store";
-import { STATUS_LABELS, type OrcamentoStatus } from "@/lib/types";
-import { Plus, Search, MoreVertical, Eye, Pencil, Copy, Trash2 } from "lucide-react";
+import { STATUS_LABELS, type OrcamentoStatus, type Orcamento } from "@/lib/types";
+import { Plus, Search, MoreVertical, Eye, Pencil, Copy, Trash2, FileDown, MessageCircle } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
+import { gerarOrcamentoPdf } from "@/lib/pdf";
+import { abrirWhatsAppOrcamento } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/_authenticated/orcamentos/")({
   head: () => ({ meta: [{ title: "Orçamentos — ObraPro" }] }),
