@@ -164,6 +164,9 @@ function OrcamentosPage() {
                     <StatusBadge status={o.status} />
                     <span className="text-base font-bold">{formatBRL(calcTotal(o))}</span>
                   </div>
+                  <div className="mt-3 flex gap-2">
+                    {renderQuickActions(o)}
+                  </div>
                 </div>
               );
             })}
