@@ -37,24 +37,24 @@ function Dashboard() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Dashboard</h1>
+          <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Visão geral dos seus orçamentos</p>
         </div>
-        <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-md">
+        <Button asChild className="w-full bg-accent text-accent-foreground shadow-md hover:bg-accent/90 sm:w-auto">
           <Link to="/orcamentos/novo"><Plus className="mr-2 h-4 w-4" />Novo Orçamento</Link>
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {cards.map((c) => (
           <Card key={c.label}>
-            <CardContent className="flex items-center gap-4 p-5">
-              <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${c.tone}`}>
-                <c.icon className="h-6 w-6" />
+            <CardContent className="flex items-center gap-3 p-4 sm:gap-4 sm:p-5">
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg sm:h-12 sm:w-12 ${c.tone}`}>
+                <c.icon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{c.label}</p>
-                <p className="truncate text-xl font-bold">{c.value}</p>
+                <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground sm:text-xs">{c.label}</p>
+                <p className="truncate text-base font-bold sm:text-xl">{c.value}</p>
               </div>
             </CardContent>
           </Card>
@@ -63,7 +63,7 @@ function Dashboard() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Últimos orçamentos</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Últimos orçamentos</CardTitle>
           <Button asChild variant="ghost" size="sm">
             <Link to="/orcamentos">Ver todos</Link>
           </Button>
@@ -72,45 +72,79 @@ function Dashboard() {
           {ultimos.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Nenhum orçamento ainda. Crie o primeiro!</p>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nº</TableHead>
-                    <TableHead>Título</TableHead>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-12"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {ultimos.map((o) => {
-                    const cli = clientes.find((c) => c.id === o.clienteId);
-                    return (
-                      <TableRow key={o.id}>
-                        <TableCell className="font-mono text-xs">#{o.numero}</TableCell>
-                        <TableCell className="font-medium">{o.titulo}</TableCell>
-                        <TableCell className="text-muted-foreground">{cli?.nome ?? "—"}</TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {format(new Date(o.data), "dd MMM yyyy", { locale: ptBR })}
-                        </TableCell>
-                        <TableCell className="text-right font-semibold">{formatBRL(calcTotal(o))}</TableCell>
-                        <TableCell><StatusBadge status={o.status} /></TableCell>
-                        <TableCell>
-                          <Button asChild variant="ghost" size="icon">
-                            <Link to="/orcamentos/$id/preview" params={{ id: o.id }}>
-                              <Eye className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+            <>
+              {/* Mobile: cards */}
+              <div className="space-y-3 md:hidden">
+                {ultimos.map((o) => {
+                  const cli = clientes.find((c) => c.id === o.clienteId);
+                  return (
+                    <Link
+                      key={o.id}
+                      to="/orcamentos/$id/preview"
+                      params={{ id: o.id }}
+                      className="block rounded-lg border bg-card p-3 transition-colors hover:bg-muted/40"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span className="font-mono">#{o.numero}</span>
+                            <span>•</span>
+                            <span>{format(new Date(o.data), "dd MMM", { locale: ptBR })}</span>
+                          </div>
+                          <p className="mt-1 truncate font-semibold">{o.titulo}</p>
+                          <p className="truncate text-sm text-muted-foreground">{cli?.nome ?? "—"}</p>
+                        </div>
+                        <Eye className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      </div>
+                      <div className="mt-2 flex items-center justify-between">
+                        <StatusBadge status={o.status} />
+                        <span className="text-sm font-bold">{formatBRL(calcTotal(o))}</span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+              {/* Desktop: table */}
+              <div className="hidden overflow-x-auto md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nº</TableHead>
+                      <TableHead>Título</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead className="text-right">Valor</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="w-12"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {ultimos.map((o) => {
+                      const cli = clientes.find((c) => c.id === o.clienteId);
+                      return (
+                        <TableRow key={o.id}>
+                          <TableCell className="font-mono text-xs">#{o.numero}</TableCell>
+                          <TableCell className="font-medium">{o.titulo}</TableCell>
+                          <TableCell className="text-muted-foreground">{cli?.nome ?? "—"}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {format(new Date(o.data), "dd MMM yyyy", { locale: ptBR })}
+                          </TableCell>
+                          <TableCell className="text-right font-semibold">{formatBRL(calcTotal(o))}</TableCell>
+                          <TableCell><StatusBadge status={o.status} /></TableCell>
+                          <TableCell>
+                            <Button asChild variant="ghost" size="icon">
+                              <Link to="/orcamentos/$id/preview" params={{ id: o.id }}>
+                                <Eye className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

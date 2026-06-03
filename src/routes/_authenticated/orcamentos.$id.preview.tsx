@@ -81,39 +81,39 @@ function PreviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30 py-6">
+    <div className="min-h-screen bg-muted/30 py-4 sm:py-6">
       {/* Floating toolbar */}
-      <div className="no-print sticky top-0 z-20 mx-auto mb-6 flex max-w-4xl flex-wrap items-center justify-between gap-2 rounded-lg border bg-card p-3 shadow-sm">
-        <Button asChild variant="ghost" size="sm">
+      <div className="no-print sticky top-0 z-20 mx-auto mb-4 flex max-w-4xl flex-col gap-2 rounded-lg border bg-card p-3 shadow-sm sm:mb-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <Button asChild variant="ghost" size="sm" className="w-full justify-start sm:w-auto">
           <Link to="/orcamentos"><ArrowLeft className="mr-2 h-4 w-4" />Voltar</Link>
         </Button>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={() => window.print()}><Printer className="mr-2 h-4 w-4" />Imprimir</Button>
-          <Button size="sm" onClick={gerarPdf} className="bg-accent text-accent-foreground hover:bg-accent/90"><FileDown className="mr-2 h-4 w-4" />Baixar PDF</Button>
-          <Button size="sm" onClick={enviarWhatsApp} className="bg-success text-success-foreground hover:bg-success/90"><MessageCircle className="mr-2 h-4 w-4" />WhatsApp</Button>
+        <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+          <Button variant="outline" size="sm" onClick={() => window.print()} className="w-full sm:w-auto"><Printer className="mr-2 h-4 w-4" />Imprimir</Button>
+          <Button size="sm" onClick={gerarPdf} className="w-full bg-accent text-accent-foreground hover:bg-accent/90 sm:w-auto"><FileDown className="mr-2 h-4 w-4" />Baixar PDF</Button>
+          <Button size="sm" onClick={enviarWhatsApp} className="w-full bg-success text-success-foreground hover:bg-success/90 sm:w-auto"><MessageCircle className="mr-2 h-4 w-4" />WhatsApp</Button>
         </div>
       </div>
 
       {/* A4 page */}
       <div ref={pageRef} className="a4-page print-page text-[13px] leading-relaxed">
         {/* Header */}
-        <div className="flex items-start justify-between border-b-4 pb-4" style={{ borderColor: "#d97706" }}>
+        <div className="flex flex-col gap-3 border-b-4 pb-4 sm:flex-row sm:items-start sm:justify-between" style={{ borderColor: "#d97706" }}>
           <div className="flex items-center gap-3">
             {empresa.logoBase64 ? (
-              <img src={empresa.logoBase64} alt={empresa.nome} className="h-16 w-16 rounded object-contain" />
+              <img src={empresa.logoBase64} alt={empresa.nome} className="h-14 w-14 rounded object-contain sm:h-16 sm:w-16" />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded bg-slate-800 text-amber-400">
-                <HardHat className="h-8 w-8" />
+              <div className="flex h-14 w-14 items-center justify-center rounded bg-slate-800 text-amber-400 sm:h-16 sm:w-16">
+                <HardHat className="h-7 w-7 sm:h-8 sm:w-8" />
               </div>
             )}
-            <div>
-              <h1 className="text-xl font-bold text-slate-800">{empresa.nome}</h1>
-              <p className="text-xs text-slate-500">{empresa.descricao}</p>
+            <div className="min-w-0">
+              <h1 className="truncate text-lg font-bold text-slate-800 sm:text-xl">{empresa.nome}</h1>
+              <p className="truncate text-xs text-slate-500">{empresa.descricao}</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Proposta Comercial</p>
-            <p className="text-2xl font-bold text-slate-800">Nº {orcamento.numero}</p>
+          <div className="sm:text-right">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:text-xs">Proposta Comercial</p>
+            <p className="text-xl font-bold text-slate-800 sm:text-2xl">Nº {orcamento.numero}</p>
             <p className="text-xs text-slate-500">{format(new Date(orcamento.data), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
           </div>
         </div>
@@ -125,7 +125,7 @@ function PreviewPage() {
         </div>
 
         {/* Data blocks */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Block title="Empresa">
             <p><strong>{empresa.nome}</strong></p>
             <p>{empresa.documento}</p>
@@ -148,7 +148,8 @@ function PreviewPage() {
 
         {/* Itens */}
         <Section title="Itens do orçamento">
-          <table className="w-full border-collapse text-xs">
+          <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
+          <table className="w-full min-w-[480px] border-collapse text-xs">
             <thead>
               <tr className="bg-slate-100 text-slate-700">
                 <th className="border border-slate-200 px-2 py-1.5 text-left">Descrição</th>
@@ -186,6 +187,7 @@ function PreviewPage() {
               })}
             </tbody>
           </table>
+          </div>
 
           {/* Totals */}
           <div className="ml-auto mt-4 w-full max-w-xs space-y-1 text-sm">
@@ -202,7 +204,7 @@ function PreviewPage() {
 
         {/* Condições */}
         <Section title="Condições comerciais">
-          <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
             {orcamento.prazoExecucao && <Item label="Prazo de execução" value={orcamento.prazoExecucao} />}
             {orcamento.formaPagamento && <Item label="Forma de pagamento" value={orcamento.formaPagamento} />}
             {orcamento.garantia && <Item label="Garantia" value={orcamento.garantia} />}
@@ -218,7 +220,7 @@ function PreviewPage() {
         </Section>
 
         {/* Assinatura */}
-        <div className="mt-12 grid grid-cols-2 gap-12 pt-8">
+        <div className="mt-10 grid grid-cols-1 gap-8 pt-8 sm:mt-12 sm:grid-cols-2 sm:gap-12">
           <div className="text-center">
             <div className="border-t border-slate-400 pt-2 text-xs text-slate-600">
               <p className="font-semibold text-slate-800">{empresa.responsavel}</p>

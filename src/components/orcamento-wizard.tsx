@@ -85,10 +85,30 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
 
   const dateInput = (iso: string) => iso.slice(0, 10);
 
+  const currentStep = STEPS.find((s) => s.n === step)!;
+
   return (
-    <div className="space-y-6">
-      {/* Stepper */}
-      <div className="flex items-center justify-between gap-2 overflow-x-auto">
+    <div className="space-y-5 md:space-y-6">
+      {/* Stepper: mobile compact, desktop full */}
+      <div className="md:hidden">
+        <div className="flex items-center justify-between gap-3 rounded-lg border bg-card p-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-semibold text-accent-foreground">
+              {step}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Passo {step} de {STEPS.length}</p>
+              <p className="truncate text-sm font-semibold">{currentStep.t}</p>
+            </div>
+          </div>
+          <div className="flex gap-1 shrink-0">
+            {STEPS.map((s) => (
+              <span key={s.n} className={`h-1.5 w-4 rounded-full ${step >= s.n ? "bg-accent" : "bg-muted"}`} />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="hidden items-center justify-between gap-2 overflow-x-auto md:flex">
         {STEPS.map((s, i) => (
           <div key={s.n} className="flex flex-1 items-center gap-2">
             <button
@@ -101,14 +121,14 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
             >
               {step > s.n ? <Check className="h-4 w-4" /> : s.n}
             </button>
-            <span className={`hidden text-sm font-medium md:inline ${step === s.n ? "text-foreground" : "text-muted-foreground"}`}>{s.t}</span>
+            <span className={`text-sm font-medium ${step === s.n ? "text-foreground" : "text-muted-foreground"}`}>{s.t}</span>
             {i < STEPS.length - 1 && <div className={`h-px flex-1 ${step > s.n ? "bg-primary" : "bg-border"}`} />}
           </div>
         ))}
       </div>
 
       <Card>
-        <CardContent className="p-5 md:p-7">
+        <CardContent className="p-4 sm:p-5 md:p-7">
           {step === 1 && (
             <div className="space-y-5">
               <h2 className="text-lg font-semibold">Cliente e dados da obra</h2>
@@ -163,11 +183,60 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
 
           {step === 3 && (
             <div className="space-y-5">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="text-lg font-semibold">Itens do orçamento</h2>
-                <Button onClick={addItem} size="sm"><Plus className="mr-2 h-4 w-4" />Adicionar item</Button>
+                <Button onClick={addItem} size="sm" className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" />Adicionar item</Button>
               </div>
-              <div className="overflow-x-auto rounded-md border">
+
+              {/* Mobile: stacked cards */}
+              <div className="space-y-3 md:hidden">
+                {form.itens.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">Nenhum item. Toque em "Adicionar item".</p>
+                ) : form.itens.map((i, idx) => (
+                  <div key={i.id} className="space-y-3 rounded-lg border bg-card p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Item {idx + 1}</span>
+                      <Button variant="ghost" size="icon" onClick={() => removeItem(i.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label className="text-xs">Categoria</Label>
+                      <Select value={i.categoria} onValueChange={(v) => updateItem(i.id, { categoria: v as ItemCategoria })}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {(Object.keys(CATEGORIA_LABELS) as ItemCategoria[]).map((c) => (
+                            <SelectItem key={c} value={c}>{CATEGORIA_LABELS[c]}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label className="text-xs">Descrição</Label>
+                      <Input value={i.descricao} onChange={(e) => updateItem(i.id, { descricao: e.target.value })} />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="grid gap-2">
+                        <Label className="text-xs">Unid.</Label>
+                        <Input value={i.unidade} onChange={(e) => updateItem(i.id, { unidade: e.target.value })} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label className="text-xs">Qtd.</Label>
+                        <Input type="number" inputMode="decimal" step="0.01" value={i.quantidade} onChange={(e) => updateItem(i.id, { quantidade: parseFloat(e.target.value) || 0 })} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label className="text-xs">Vlr. unit.</Label>
+                        <Input type="number" inputMode="decimal" step="0.01" value={i.valorUnitario} onChange={(e) => updateItem(i.id, { valorUnitario: parseFloat(e.target.value) || 0 })} />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between border-t pt-2">
+                      <span className="text-xs text-muted-foreground">Total</span>
+                      <span className="font-semibold">{formatBRL(i.quantidade * i.valorUnitario)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop: table */}
+              <div className="hidden overflow-x-auto rounded-md border md:block">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -207,28 +276,29 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
                 </Table>
               </div>
 
-              <div className="ml-auto max-w-sm space-y-3 rounded-lg border bg-muted/30 p-4">
+              <div className="space-y-3 rounded-lg border bg-muted/30 p-4 sm:ml-auto sm:max-w-sm">
                 <div className="flex justify-between text-sm"><span>Subtotal</span><span className="font-medium">{formatBRL(subtotal)}</span></div>
                 <div className="flex items-center gap-2">
                   <Label className="text-sm">Desconto</Label>
                   <Select value={form.descontoTipo} onValueChange={(v) => set("descontoTipo", v as "valor" | "percentual")}>
-                    <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="w-20 shrink-0"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="valor">R$</SelectItem>
                       <SelectItem value="percentual">%</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input type="number" step="0.01" value={form.descontoValor} onChange={(e) => set("descontoValor", parseFloat(e.target.value) || 0)} />
+                  <Input type="number" inputMode="decimal" step="0.01" value={form.descontoValor} onChange={(e) => set("descontoValor", parseFloat(e.target.value) || 0)} />
                 </div>
                 <div className="flex justify-between text-sm text-muted-foreground"><span>Desconto aplicado</span><span>− {formatBRL(descontoAplicado)}</span></div>
                 <Separator />
-                <div className="flex items-baseline justify-between">
+                <div className="flex items-baseline justify-between gap-2">
                   <span className="text-sm font-medium">Valor final</span>
-                  <span className="text-2xl font-bold text-accent-foreground">{formatBRL(total)}</span>
+                  <span className="text-xl font-bold text-accent-foreground sm:text-2xl">{formatBRL(total)}</span>
                 </div>
               </div>
             </div>
           )}
+
 
           {step === 4 && (
             <div className="space-y-5">
@@ -274,36 +344,36 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
                 <Field label="Pagamento" value={form.formaPagamento || "—"} />
               </div>
               <Separator />
-              <div className="flex items-center justify-between rounded-lg bg-accent/10 p-4">
+              <div className="flex flex-col gap-3 rounded-lg bg-accent/10 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Valor total da proposta</p>
-                  <p className="text-3xl font-bold">{formatBRL(total)}</p>
+                  <p className="text-2xl font-bold sm:text-3xl">{formatBRL(total)}</p>
                 </div>
-                <div className="text-right text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground sm:text-right">
                   <p>{form.itens.length} itens</p>
                   <p>Status: <span className="font-medium text-foreground">{STATUS_LABELS[form.status]}</span></p>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={() => save()} variant="outline"><Save className="mr-2 h-4 w-4" />Salvar rascunho</Button>
-                <Button onClick={goPreview}><Eye className="mr-2 h-4 w-4" />Visualizar proposta</Button>
-                <Button onClick={goPreview} className="bg-accent text-accent-foreground hover:bg-accent/90"><FileDown className="mr-2 h-4 w-4" />Gerar PDF</Button>
-                <Button onClick={enviarWhatsApp} className="bg-success text-success-foreground hover:bg-success/90"><MessageCircle className="mr-2 h-4 w-4" />Enviar por WhatsApp</Button>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:flex-wrap">
+                <Button onClick={() => save()} variant="outline" className="w-full sm:w-auto"><Save className="mr-2 h-4 w-4" />Salvar rascunho</Button>
+                <Button onClick={goPreview} className="w-full sm:w-auto"><Eye className="mr-2 h-4 w-4" />Visualizar</Button>
+                <Button onClick={goPreview} className="w-full bg-accent text-accent-foreground hover:bg-accent/90 sm:w-auto"><FileDown className="mr-2 h-4 w-4" />Gerar PDF</Button>
+                <Button onClick={enviarWhatsApp} className="w-full bg-success text-success-foreground hover:bg-success/90 sm:w-auto"><MessageCircle className="mr-2 h-4 w-4" />WhatsApp</Button>
               </div>
             </div>
           )}
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between">
-        <Button variant="outline" onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <Button variant="outline" onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1} className="w-full sm:w-auto">
           <ArrowLeft className="mr-2 h-4 w-4" />Voltar
         </Button>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => save()}><Save className="mr-2 h-4 w-4" />Salvar</Button>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button variant="outline" onClick={() => save()} className="w-full sm:w-auto"><Save className="mr-2 h-4 w-4" />Salvar</Button>
           {step < 5 && (
-            <Button onClick={() => setStep(Math.min(5, step + 1))}>
+            <Button onClick={() => setStep(Math.min(5, step + 1))} className="w-full sm:w-auto">
               Próximo<ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           )}
