@@ -183,11 +183,60 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
 
           {step === 3 && (
             <div className="space-y-5">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="text-lg font-semibold">Itens do orçamento</h2>
-                <Button onClick={addItem} size="sm"><Plus className="mr-2 h-4 w-4" />Adicionar item</Button>
+                <Button onClick={addItem} size="sm" className="w-full sm:w-auto"><Plus className="mr-2 h-4 w-4" />Adicionar item</Button>
               </div>
-              <div className="overflow-x-auto rounded-md border">
+
+              {/* Mobile: stacked cards */}
+              <div className="space-y-3 md:hidden">
+                {form.itens.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">Nenhum item. Toque em "Adicionar item".</p>
+                ) : form.itens.map((i, idx) => (
+                  <div key={i.id} className="space-y-3 rounded-lg border bg-card p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Item {idx + 1}</span>
+                      <Button variant="ghost" size="icon" onClick={() => removeItem(i.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label className="text-xs">Categoria</Label>
+                      <Select value={i.categoria} onValueChange={(v) => updateItem(i.id, { categoria: v as ItemCategoria })}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {(Object.keys(CATEGORIA_LABELS) as ItemCategoria[]).map((c) => (
+                            <SelectItem key={c} value={c}>{CATEGORIA_LABELS[c]}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label className="text-xs">Descrição</Label>
+                      <Input value={i.descricao} onChange={(e) => updateItem(i.id, { descricao: e.target.value })} />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="grid gap-2">
+                        <Label className="text-xs">Unid.</Label>
+                        <Input value={i.unidade} onChange={(e) => updateItem(i.id, { unidade: e.target.value })} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label className="text-xs">Qtd.</Label>
+                        <Input type="number" inputMode="decimal" step="0.01" value={i.quantidade} onChange={(e) => updateItem(i.id, { quantidade: parseFloat(e.target.value) || 0 })} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label className="text-xs">Vlr. unit.</Label>
+                        <Input type="number" inputMode="decimal" step="0.01" value={i.valorUnitario} onChange={(e) => updateItem(i.id, { valorUnitario: parseFloat(e.target.value) || 0 })} />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between border-t pt-2">
+                      <span className="text-xs text-muted-foreground">Total</span>
+                      <span className="font-semibold">{formatBRL(i.quantidade * i.valorUnitario)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop: table */}
+              <div className="hidden overflow-x-auto rounded-md border md:block">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -227,28 +276,29 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
                 </Table>
               </div>
 
-              <div className="ml-auto max-w-sm space-y-3 rounded-lg border bg-muted/30 p-4">
+              <div className="space-y-3 rounded-lg border bg-muted/30 p-4 sm:ml-auto sm:max-w-sm">
                 <div className="flex justify-between text-sm"><span>Subtotal</span><span className="font-medium">{formatBRL(subtotal)}</span></div>
                 <div className="flex items-center gap-2">
                   <Label className="text-sm">Desconto</Label>
                   <Select value={form.descontoTipo} onValueChange={(v) => set("descontoTipo", v as "valor" | "percentual")}>
-                    <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="w-20 shrink-0"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="valor">R$</SelectItem>
                       <SelectItem value="percentual">%</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input type="number" step="0.01" value={form.descontoValor} onChange={(e) => set("descontoValor", parseFloat(e.target.value) || 0)} />
+                  <Input type="number" inputMode="decimal" step="0.01" value={form.descontoValor} onChange={(e) => set("descontoValor", parseFloat(e.target.value) || 0)} />
                 </div>
                 <div className="flex justify-between text-sm text-muted-foreground"><span>Desconto aplicado</span><span>− {formatBRL(descontoAplicado)}</span></div>
                 <Separator />
-                <div className="flex items-baseline justify-between">
+                <div className="flex items-baseline justify-between gap-2">
                   <span className="text-sm font-medium">Valor final</span>
-                  <span className="text-2xl font-bold text-accent-foreground">{formatBRL(total)}</span>
+                  <span className="text-xl font-bold text-accent-foreground sm:text-2xl">{formatBRL(total)}</span>
                 </div>
               </div>
             </div>
           )}
+
 
           {step === 4 && (
             <div className="space-y-5">
