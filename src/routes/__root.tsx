@@ -15,6 +15,16 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import { useStore } from "@/lib/store";
+
+function useStoreHydrated() {
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    useStore.persist.rehydrate();
+    setHydrated(true);
+  }, []);
+  return hydrated;
+}
 
 function NotFoundComponent() {
   return (
