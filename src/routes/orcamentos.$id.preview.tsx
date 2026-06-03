@@ -162,8 +162,8 @@ function PreviewPage() {
               {itensPorCategoria.map(({ cat, itens }) => {
                 const subCat = itens.reduce((s, i) => s + i.quantidade * i.valorUnitario, 0);
                 return (
-                  <>
-                    <tr key={`h-${cat}`}>
+                  <Fragment key={cat}>
+                    <tr>
                       <td colSpan={5} className="border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
                         {CATEGORIA_LABELS[cat]}
                       </td>
@@ -177,11 +177,11 @@ function PreviewPage() {
                         <td className="border border-slate-200 px-2 py-1.5 text-right font-medium">{formatBRL(i.quantidade * i.valorUnitario)}</td>
                       </tr>
                     ))}
-                    <tr key={`s-${cat}`}>
+                    <tr>
                       <td colSpan={4} className="border border-slate-200 px-2 py-1 text-right text-xs italic text-slate-500">Subtotal {CATEGORIA_LABELS[cat]}</td>
                       <td className="border border-slate-200 px-2 py-1 text-right text-xs font-semibold text-slate-700">{formatBRL(subCat)}</td>
                     </tr>
-                  </>
+                  </Fragment>
                 );
               })}
             </tbody>
