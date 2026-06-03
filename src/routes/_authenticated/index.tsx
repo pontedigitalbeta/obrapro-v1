@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusBadge } from "@/components/status-badge";
 import { useStore, calcTotal, formatBRL } from "@/lib/store";
-import { Plus, FileText, Clock, CheckCircle2, DollarSign, Eye } from "lucide-react";
+import { Plus, FileText, Clock, CheckCircle2, DollarSign, Eye, Users, LifeBuoy } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import logoIcon from "@/assets/obrapro-icon.png.asset.json";
 import { InstallAppButton } from "@/components/install-app-button";
+import { InfoTooltip } from "@/components/info-tooltip";
+import { fieldHelp } from "@/lib/help-content";
 
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({ meta: [{ title: "Dashboard — ObraPro" }] }),
@@ -29,10 +31,10 @@ function Dashboard() {
   const ultimos = [...orcamentos].sort((a, b) => b.atualizadoEm.localeCompare(a.atualizadoEm)).slice(0, 5);
 
   const cards = [
-    { label: "Total de orçamentos", value: total, icon: FileText, tone: "bg-primary/10 text-primary" },
-    { label: "Pendentes", value: pendentes, icon: Clock, tone: "bg-warning/15 text-warning-foreground" },
-    { label: "Aprovados", value: aprovados, icon: CheckCircle2, tone: "bg-success/15 text-success" },
-    { label: "Em negociação", value: formatBRL(valorNegociacao), icon: DollarSign, tone: "bg-accent/20 text-accent-foreground" },
+    { label: "Total de orçamentos", value: total, icon: FileText, tone: "bg-primary/10 text-primary", help: fieldHelp.dashboard.total },
+    { label: "Pendentes", value: pendentes, icon: Clock, tone: "bg-warning/15 text-warning-foreground", help: fieldHelp.dashboard.pendentes },
+    { label: "Aprovados", value: aprovados, icon: CheckCircle2, tone: "bg-success/15 text-success", help: fieldHelp.dashboard.aprovados },
+    { label: "Em negociação", value: formatBRL(valorNegociacao), icon: DollarSign, tone: "bg-accent/20 text-accent-foreground", help: fieldHelp.dashboard.negociacao },
   ];
 
   return (
@@ -53,6 +55,22 @@ function Dashboard() {
         </div>
       </div>
 
+      {total === 0 && (
+        <Card className="border-accent/30 bg-accent/5">
+          <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-base font-semibold">Vamos começar?</p>
+              <p className="text-sm text-muted-foreground">Comece cadastrando um cliente e criando seu primeiro orçamento profissional.</p>
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button asChild variant="outline" size="sm"><Link to="/clientes"><Users className="mr-2 h-4 w-4" />Cadastrar cliente</Link></Button>
+              <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90"><Link to="/orcamentos/novo"><Plus className="mr-2 h-4 w-4" />Criar orçamento</Link></Button>
+              <Button asChild variant="ghost" size="sm"><Link to="/ajuda"><LifeBuoy className="mr-2 h-4 w-4" />Ver ajuda</Link></Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {cards.map((c) => (
           <Card key={c.label}>
@@ -61,7 +79,10 @@ function Dashboard() {
                 <c.icon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground sm:text-xs">{c.label}</p>
+                <div className="flex items-center gap-1">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground sm:text-xs">{c.label}</p>
+                  <InfoTooltip content={c.help} title={c.label} />
+                </div>
                 <p className="truncate text-base font-bold sm:text-xl">{c.value}</p>
               </div>
             </CardContent>

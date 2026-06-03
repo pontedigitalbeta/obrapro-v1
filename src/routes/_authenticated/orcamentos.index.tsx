@@ -15,6 +15,8 @@ import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { gerarOrcamentoPdf } from "@/lib/pdf";
 import { abrirWhatsAppOrcamento } from "@/lib/whatsapp";
+import { InfoTooltip } from "@/components/info-tooltip";
+import { fieldHelp } from "@/lib/help-content";
 
 export const Route = createFileRoute("/_authenticated/orcamentos/")({
   head: () => ({ meta: [{ title: "Orçamentos — ObraPro" }] }),
@@ -122,22 +124,28 @@ function OrcamentosPage() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar..." className="pl-9" />
             </div>
-            <Select value={statusFiltro} onValueChange={setStatusFiltro}>
-              <SelectTrigger className="w-full sm:w-44"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os status</SelectItem>
-                {(Object.keys(STATUS_LABELS) as OrcamentoStatus[]).map((s) => (
-                  <SelectItem key={s} value={s}>{STATUS_LABELS[s]}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={clienteFiltro} onValueChange={setClienteFiltro}>
-              <SelectTrigger className="w-full sm:w-56"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os clientes</SelectItem>
-                {clientes.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <div className="flex w-full items-center gap-1 sm:w-auto">
+              <Select value={statusFiltro} onValueChange={setStatusFiltro}>
+                <SelectTrigger className="w-full sm:w-44" aria-label="Filtrar por status"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os status</SelectItem>
+                  {(Object.keys(STATUS_LABELS) as OrcamentoStatus[]).map((s) => (
+                    <SelectItem key={s} value={s}>{STATUS_LABELS[s]}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <InfoTooltip content={fieldHelp.orcamentosLista.filtroStatus} title="Filtro de status" />
+            </div>
+            <div className="flex w-full items-center gap-1 sm:w-auto">
+              <Select value={clienteFiltro} onValueChange={setClienteFiltro}>
+                <SelectTrigger className="w-full sm:w-56" aria-label="Filtrar por cliente"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os clientes</SelectItem>
+                  {clientes.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <InfoTooltip content={fieldHelp.orcamentosLista.filtroCliente} title="Filtro de cliente" />
+            </div>
           </div>
 
           {/* Mobile: cards */}

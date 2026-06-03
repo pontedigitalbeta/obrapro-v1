@@ -12,6 +12,9 @@ import { useStore, calcSubtotal, calcDesconto, calcTotal, formatBRL } from "@/li
 import { CATEGORIA_LABELS, STATUS_LABELS, type ItemCategoria, type Orcamento, type OrcamentoItem, type OrcamentoStatus } from "@/lib/types";
 import { ArrowLeft, ArrowRight, Plus, Trash2, Save, Eye, FileDown, MessageCircle, Check } from "lucide-react";
 import { toast } from "sonner";
+import { FieldLabelWithHelp } from "@/components/field-label-with-help";
+import { InfoTooltip } from "@/components/info-tooltip";
+import { fieldHelp } from "@/lib/help-content";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -134,7 +137,7 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
               <h2 className="text-lg font-semibold">Cliente e dados da obra</h2>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="grid gap-2 md:col-span-2">
-                  <Label>Cliente *</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.cliente} required>Cliente</FieldLabelWithHelp>
                   <Select value={form.clienteId} onValueChange={(v) => {
                     set("clienteId", v);
                     const c = clientes.find((x) => x.id === v);
@@ -148,19 +151,19 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
                   <p className="text-xs text-muted-foreground">Cadastre clientes em <a href="/clientes" className="underline">Clientes</a></p>
                 </div>
                 <div className="grid gap-2 md:col-span-2">
-                  <Label>Título do orçamento *</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.titulo} required>Título do orçamento</FieldLabelWithHelp>
                   <Input value={form.titulo} onChange={(e) => set("titulo", e.target.value)} placeholder="Ex: Reforma de cozinha" />
                 </div>
                 <div className="grid gap-2 md:col-span-2">
-                  <Label>Endereço da obra</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.enderecoObra}>Endereço da obra</FieldLabelWithHelp>
                   <Input value={form.enderecoObra} onChange={(e) => set("enderecoObra", e.target.value)} />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Data</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.data}>Data</FieldLabelWithHelp>
                   <Input type="date" value={dateInput(form.data)} onChange={(e) => set("data", new Date(e.target.value).toISOString())} />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Validade da proposta</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.validade}>Validade da proposta</FieldLabelWithHelp>
                   <Input type="date" value={dateInput(form.validade)} onChange={(e) => set("validade", new Date(e.target.value).toISOString())} />
                 </div>
               </div>
@@ -171,11 +174,11 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
             <div className="space-y-5">
               <h2 className="text-lg font-semibold">Tipo de serviço e escopo</h2>
               <div className="grid gap-2">
-                <Label>Tipo de serviço</Label>
+                <FieldLabelWithHelp help={fieldHelp.wizard.tipoServico}>Tipo de serviço</FieldLabelWithHelp>
                 <Input value={form.tipoServico} onChange={(e) => set("tipoServico", e.target.value)} placeholder="Ex: Reforma residencial, Alvenaria, Pintura..." />
               </div>
               <div className="grid gap-2">
-                <Label>Descrição do escopo</Label>
+                <FieldLabelWithHelp help={fieldHelp.wizard.descricaoEscopo}>Descrição do escopo</FieldLabelWithHelp>
                 <Textarea rows={8} value={form.descricaoEscopo} onChange={(e) => set("descricaoEscopo", e.target.value)} placeholder="Descreva detalhadamente o que será executado..." />
               </div>
             </div>
@@ -280,6 +283,7 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
                 <div className="flex justify-between text-sm"><span>Subtotal</span><span className="font-medium">{formatBRL(subtotal)}</span></div>
                 <div className="flex items-center gap-2">
                   <Label className="text-sm">Desconto</Label>
+                  <InfoTooltip content={fieldHelp.wizard.desconto} title="Desconto" />
                   <Select value={form.descontoTipo} onValueChange={(v) => set("descontoTipo", v as "valor" | "percentual")}>
                     <SelectTrigger className="w-20 shrink-0"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -292,7 +296,7 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
                 <div className="flex justify-between text-sm text-muted-foreground"><span>Desconto aplicado</span><span>− {formatBRL(descontoAplicado)}</span></div>
                 <Separator />
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-sm font-medium">Valor final</span>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-medium">Valor final <InfoTooltip content={fieldHelp.wizard.valorFinal} title="Valor final" /></span>
                   <span className="text-xl font-bold text-accent-foreground sm:text-2xl">{formatBRL(total)}</span>
                 </div>
               </div>
@@ -305,27 +309,27 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
               <h2 className="text-lg font-semibold">Condições comerciais</h2>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
-                  <Label>Prazo de execução</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.prazoExecucao}>Prazo de execução</FieldLabelWithHelp>
                   <Input value={form.prazoExecucao} onChange={(e) => set("prazoExecucao", e.target.value)} placeholder="Ex: 30 dias úteis" />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Forma de pagamento</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.formaPagamento}>Forma de pagamento</FieldLabelWithHelp>
                   <Input value={form.formaPagamento} onChange={(e) => set("formaPagamento", e.target.value)} placeholder="Ex: 30% entrada, 70% na entrega" />
                 </div>
                 <div className="grid gap-2 md:col-span-2">
-                  <Label>Garantia</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.garantia}>Garantia</FieldLabelWithHelp>
                   <Input value={form.garantia} onChange={(e) => set("garantia", e.target.value)} placeholder="Ex: 12 meses para mão de obra" />
                 </div>
                 <div className="grid gap-2">
-                  <Label>O que está incluso</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.incluso}>O que está incluso</FieldLabelWithHelp>
                   <Textarea rows={4} value={form.incluso} onChange={(e) => set("incluso", e.target.value)} />
                 </div>
                 <div className="grid gap-2">
-                  <Label>O que NÃO está incluso</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.naoIncluso}>O que NÃO está incluso</FieldLabelWithHelp>
                   <Textarea rows={4} value={form.naoIncluso} onChange={(e) => set("naoIncluso", e.target.value)} />
                 </div>
                 <div className="grid gap-2 md:col-span-2">
-                  <Label>Observações finais</Label>
+                  <FieldLabelWithHelp help={fieldHelp.wizard.observacoesFinais}>Observações finais</FieldLabelWithHelp>
                   <Textarea rows={3} value={form.observacoesFinais} onChange={(e) => set("observacoesFinais", e.target.value)} />
                 </div>
               </div>
