@@ -9,6 +9,8 @@ import { useStore } from "@/lib/store";
 import { Save, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import logoFull from "@/assets/obrapro-logo.png.asset.json";
+import { InstallAppButton } from "@/components/install-app-button";
+import { Smartphone } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações — ObraPro" }] }),
@@ -48,6 +50,21 @@ function ConfigPage() {
             <p className="text-sm font-semibold">Identidade visual do sistema</p>
             <p className="text-xs text-muted-foreground">Este é o logotipo do ObraPro. Envie abaixo o logo da sua empresa para personalizar suas propostas.</p>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent">
+              <Smartphone className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">Aplicativo ObraPro</p>
+              <p className="text-xs text-muted-foreground">Instale o ObraPro no seu celular ou computador e abra como um aplicativo, sem precisar do navegador.</p>
+            </div>
+          </div>
+          <InstallAppButton variant="default" size="default" className="bg-primary text-primary-foreground hover:bg-primary/90" />
         </CardContent>
       </Card>
 

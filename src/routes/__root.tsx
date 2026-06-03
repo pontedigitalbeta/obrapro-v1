@@ -90,6 +90,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "ObraPro | Orçamentos Profissionais para Obras e Reformas" },
       { name: "twitter:description", content: "Crie orçamentos em PDF, propostas comerciais e apresentações profissionais para obras, reformas e serviços." },
       { name: "twitter:image", content: "https://obrapro-v1.lovable.app/og-image.jpg" },
+      { name: "theme-color", content: "#1e2540" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "ObraPro" },
+      { name: "mobile-web-app-capable", content: "yes" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -121,6 +126,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
+    void import("@/lib/pwa/register-sw").then((m) => m.registerServiceWorker());
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
         if (typeof window !== "undefined") {
