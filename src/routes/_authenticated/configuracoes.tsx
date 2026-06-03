@@ -41,6 +41,16 @@ function ConfigPage() {
         <p className="text-sm text-muted-foreground">Dados da empresa que aparecem nas propostas</p>
       </div>
 
+      <Card className="overflow-hidden border-dashed">
+        <CardContent className="flex flex-col items-center gap-3 bg-muted/30 p-6 text-center sm:flex-row sm:text-left">
+          <img src={logoFull.url} alt="ObraPro" className="h-16 w-auto object-contain" />
+          <div>
+            <p className="text-sm font-semibold">Identidade visual do sistema</p>
+            <p className="text-xs text-muted-foreground">Este é o logotipo do ObraPro. Envie abaixo o logo da sua empresa para personalizar suas propostas.</p>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardContent className="space-y-5 p-6">
           <div className="flex flex-col items-center gap-3 sm:flex-row">
