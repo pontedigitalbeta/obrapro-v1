@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { gerarOrcamentoPdf } from "@/lib/pdf";
 import { abrirWhatsAppOrcamento } from "@/lib/whatsapp";
 import { InfoTooltip } from "@/components/info-tooltip";
+import { OrcamentoStatusMenu } from "@/components/orcamento-status-menu";
 import { fieldHelp } from "@/lib/help-content";
 
 export const Route = createFileRoute("/_authenticated/orcamentos/")({
@@ -169,7 +170,10 @@ function OrcamentosPage() {
                     {renderActions(o)}
                   </div>
                   <div className="mt-3 flex items-center justify-between">
-                    <StatusBadge status={o.status} />
+                    <div className="flex items-center gap-2">
+                      <StatusBadge status={o.status} />
+                      <OrcamentoStatusMenu orcamento={o} />
+                    </div>
                     <span className="text-base font-bold">{formatBRL(calcTotal(o))}</span>
                   </div>
                   <div className="mt-3 flex gap-2">
@@ -191,7 +195,7 @@ function OrcamentosPage() {
                   <TableHead>Data</TableHead>
                   <TableHead className="text-right">Valor</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[200px] text-right">Ações</TableHead>
+                  <TableHead className="w-[260px] text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -209,6 +213,7 @@ function OrcamentosPage() {
                       <TableCell><StatusBadge status={o.status} /></TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-1.5">
+                          <OrcamentoStatusMenu orcamento={o} />
                           {renderQuickActions(o)}
                           {renderActions(o)}
                         </div>
