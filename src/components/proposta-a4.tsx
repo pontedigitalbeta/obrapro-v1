@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { HardHat } from "lucide-react";
+import logoIcon from "@/assets/obrapro-icon.png.asset.json";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CATEGORIA_LABELS, type ItemCategoria, type Orcamento, type Cliente, type Empresa } from "@/lib/types";
