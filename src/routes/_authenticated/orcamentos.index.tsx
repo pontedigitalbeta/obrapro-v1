@@ -199,7 +199,12 @@ function OrcamentosPage() {
                       <TableCell className="text-muted-foreground">{format(new Date(o.data), "dd/MM/yyyy", { locale: ptBR })}</TableCell>
                       <TableCell className="text-right font-semibold">{formatBRL(calcTotal(o))}</TableCell>
                       <TableCell><StatusBadge status={o.status} /></TableCell>
-                      <TableCell>{renderActions(o)}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-end gap-1.5">
+                          {renderQuickActions(o)}
+                          {renderActions(o)}
+                        </div>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
