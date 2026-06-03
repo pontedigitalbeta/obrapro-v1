@@ -148,7 +148,7 @@ function PreviewPage() {
 
         {/* Itens */}
         <Section title="Itens do orçamento">
-          <table className="w-full border-collapse text-xs">
+          <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
             <thead>
               <tr className="bg-slate-100 text-slate-700">
                 <th className="border border-slate-200 px-2 py-1.5 text-left">Descrição</th>
