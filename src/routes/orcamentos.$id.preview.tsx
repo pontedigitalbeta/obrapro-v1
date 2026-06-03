@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useStore, calcSubtotal, calcDesconto, calcTotal, formatBRL } from "@/lib/store";
 import { CATEGORIA_LABELS, type ItemCategoria } from "@/lib/types";
