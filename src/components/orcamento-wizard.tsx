@@ -85,10 +85,30 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
 
   const dateInput = (iso: string) => iso.slice(0, 10);
 
+  const currentStep = STEPS.find((s) => s.n === step)!;
+
   return (
-    <div className="space-y-6">
-      {/* Stepper */}
-      <div className="flex items-center justify-between gap-2 overflow-x-auto">
+    <div className="space-y-5 md:space-y-6">
+      {/* Stepper: mobile compact, desktop full */}
+      <div className="md:hidden">
+        <div className="flex items-center justify-between gap-3 rounded-lg border bg-card p-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-semibold text-accent-foreground">
+              {step}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Passo {step} de {STEPS.length}</p>
+              <p className="truncate text-sm font-semibold">{currentStep.t}</p>
+            </div>
+          </div>
+          <div className="flex gap-1 shrink-0">
+            {STEPS.map((s) => (
+              <span key={s.n} className={`h-1.5 w-4 rounded-full ${step >= s.n ? "bg-accent" : "bg-muted"}`} />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="hidden items-center justify-between gap-2 overflow-x-auto md:flex">
         {STEPS.map((s, i) => (
           <div key={s.n} className="flex flex-1 items-center gap-2">
             <button
@@ -101,14 +121,14 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
             >
               {step > s.n ? <Check className="h-4 w-4" /> : s.n}
             </button>
-            <span className={`hidden text-sm font-medium md:inline ${step === s.n ? "text-foreground" : "text-muted-foreground"}`}>{s.t}</span>
+            <span className={`text-sm font-medium ${step === s.n ? "text-foreground" : "text-muted-foreground"}`}>{s.t}</span>
             {i < STEPS.length - 1 && <div className={`h-px flex-1 ${step > s.n ? "bg-primary" : "bg-border"}`} />}
           </div>
         ))}
       </div>
 
       <Card>
-        <CardContent className="p-5 md:p-7">
+        <CardContent className="p-4 sm:p-5 md:p-7">
           {step === 1 && (
             <div className="space-y-5">
               <h2 className="text-lg font-semibold">Cliente e dados da obra</h2>
