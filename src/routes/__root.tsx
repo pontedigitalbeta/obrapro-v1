@@ -121,6 +121,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
+    void import("@/lib/pwa/register-sw").then((m) => m.registerServiceWorker());
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
         if (typeof window !== "undefined") {
