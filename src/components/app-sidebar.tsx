@@ -61,10 +61,15 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-2 py-3">
-          <img src={logoIcon.url} alt="ObraPro" className="h-9 w-9 shrink-0 rounded-md object-contain" />
+        <div className="flex flex-col items-center gap-2 px-2 py-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-sidebar-border bg-white md:h-16 md:w-16">
+            <img src={logoIcon.url} alt="ObraPro" className="h-11 w-11 object-contain md:h-12 md:w-12" />
+          </div>
           {!collapsed && (
-            <img src={logoFull.url} alt="ObraPro Orçamentos" className="h-7 w-auto object-contain" />
+            <p className="text-base font-bold leading-none tracking-tight">
+              <span className="text-sidebar-foreground">Obra</span>
+              <span className="text-accent">Pro</span>
+            </p>
           )}
         </div>
       </SidebarHeader>
