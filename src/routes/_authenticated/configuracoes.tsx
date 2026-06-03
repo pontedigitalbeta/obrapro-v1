@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import logoFull from "@/assets/obrapro-logo.png.asset.json";
 import { InstallAppButton } from "@/components/install-app-button";
 import { Smartphone } from "lucide-react";
+import { FieldLabelWithHelp } from "@/components/field-label-with-help";
+import { fieldHelp } from "@/lib/help-content";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações — ObraPro" }] }),
