@@ -1,56 +1,57 @@
-# Mobile-first responsivo
+## Objetivo
 
-Objetivo: deixar o ObraPro perfeitamente usável em telas pequenas (≥320px), mantendo o desktop intacto.
+Tornar a exportação de PDF a ação principal do orçamento: um botão "PDF" direto na lista que baixa o arquivo imediatamente, e melhorar o envio por WhatsApp para mandar o orçamento como texto formatado (em vez de só um link).
 
-## O que muda
+## Mudanças
 
-### 1. Layout autenticado (`_authenticated/route.tsx` + `app-sidebar.tsx`)
-- Sidebar já é `collapsible="icon"` no desktop. No mobile vira drawer (off-canvas) controlado pelo `SidebarTrigger` — garantir que o trigger fica sempre visível no header.
-- Header sticky: ajustar padding (`px-3 md:px-4`), reduzir texto secundário em telas pequenas (esconder "ObraPro Orçamentos" em `<sm`, mostrar só logo+título curto).
-- Main: padding `p-3 sm:p-4 md:p-6 lg:p-8`.
+### 1. Botão "PDF" direto na lista de orçamentos
+Arquivo: `src/routes/_authenticated/orcamentos.index.tsx`
 
-### 2. Tabelas (Dashboard, Orçamentos, Clientes)
-Tabelas com 6–7 colunas estouram no mobile mesmo com scroll. Estratégia híbrida:
-- `<md`: renderizar uma lista de **cards** (um card por orçamento/cliente) com as infos essenciais (nº, título, cliente, valor, status, menu de ações).
-- `≥md`: manter a `<Table>` atual.
+- Adicionar botão `PDF` (ícone `FileDown`) em cada linha da tabela e em cada card mobile, ao lado do menu de ações.
+- Ao clicar: gera o PDF do orçamento sem precisar navegar até o preview.
+- Toast de loading → sucesso/erro.
 
-Aplica a:
-- `_authenticated/index.tsx` (Últimos orçamentos)
-- `_authenticated/orcamentos.index.tsx`
-- `_authenticated/clientes.tsx`
+### 2. Extrair a geração de PDF para função reutilizável
+Novo arquivo: `src/lib/pdf.ts`
 
-### 3. Filtros e toolbars
-- Barra de busca + selects: já tem `flex-col sm:flex-row`. Confirmar que botão "Novo" ocupa largura total no mobile (`w-full sm:w-auto`).
-- Títulos: `text-xl sm:text-2xl md:text-3xl` para evitar quebra feia.
+- Função `gerarOrcamentoPdf(orcamento, cliente, empresa)` que:
+  - Renderiza um nó React off-screen (container oculto com a mesma marcação A4 do preview) usando `ReactDOM.createRoot`.
+  - Aguarda fontes/imagens carregarem.
+  - Roda `html2canvas` + `jsPDF` (mesma lógica de hoje, com paginação A4).
+  - Salva como `Orcamento_{numero}_{cliente}.pdf`.
+  - Limpa o nó ao final.
+- A página de preview e o botão da lista passam a chamar essa função única.
 
-### 4. Wizard de orçamento (`orcamento-wizard.tsx`)
-- Stepper: no mobile, mostrar só o passo atual + "Passo X de 5" em vez dos 5 chips lado a lado.
-- Grids de campos: trocar `grid-cols-2` para `grid-cols-1 sm:grid-cols-2`.
-- Tabela de itens (passo 3): no mobile, render como cards empilhados com inputs full-width; no desktop mantém tabela.
-- Botões de navegação (Voltar/Avançar/Salvar/WhatsApp/PDF): empilhar (`flex-col sm:flex-row`), todos `w-full sm:w-auto`, agrupar ações secundárias.
+### 3. Componente compartilhado da proposta
+Novo arquivo: `src/components/proposta-a4.tsx`
 
-### 5. Preview do orçamento (`orcamentos.$id.preview.tsx`)
-- Barra de ações topo: stack no mobile.
-- Documento A4: já tem largura fixa para impressão — adicionar `max-w-full overflow-x-auto` no wrapper e reduzir paddings internos em mobile (`p-6 md:p-12`).
-- Tabela de itens da proposta: scroll horizontal com indicação visual.
+- Extrair o markup A4 atual de `orcamentos.$id.preview.tsx` (header, blocos, tabela de itens, totais, condições, assinatura) para um componente puro `<PropostaA4 orcamento cliente empresa />`.
+- A página de preview passa a usar esse componente.
+- A função `gerarOrcamentoPdf` renderiza esse mesmo componente off-screen → garante que PDF da lista e do preview sejam idênticos.
 
-### 6. Auth (`routes/auth.tsx`) e Configurações
-- Card de auth: `max-w-md w-full`, padding reduzido em mobile.
-- Tabs e formulários: inputs full-width já por padrão, validar.
-- Configurações: grids 2-col → 1-col em mobile.
+### 4. WhatsApp envia o orçamento como texto formatado
+Arquivo: `src/lib/whatsapp.ts` (novo) + uso em `orcamentos.index.tsx` e `orcamentos.$id.preview.tsx`
 
-### 7. Toques finais mobile
-- Áreas de toque mínimas 44px (botões `size="icon"` já são 40px — manter, ok).
-- `font-size: 16px` em inputs para não dar zoom no iOS (shadcn já faz).
-- Adicionar `<meta name="viewport">` — verificar `__root.tsx` (já deve existir; confirmar).
+- Função `montarMensagemOrcamento(orcamento, cliente, empresa)` que retorna uma mensagem em texto pronta para WhatsApp, com formatação (asteriscos para negrito, quebras de linha, emojis discretos), contendo:
+  - Saudação ao cliente
+  - Empresa + nº da proposta + data
+  - Título e tipo de serviço
+  - Lista de itens agrupados por categoria com qtd × valor unit. = total
+  - Subtotal, desconto (se houver) e *Valor total*
+  - Prazo, forma de pagamento, garantia, validade
+  - Assinatura (responsável + telefone)
+- Botão "WhatsApp" abre `https://wa.me/55{telefone}?text={mensagem}` — abre o WhatsApp do próprio usuário já com o texto pronto para enviar ao cliente.
+- Adicionar também botão "WhatsApp" na lista (atalho) além do que já existe no preview.
 
 ## Detalhes técnicos
-- Breakpoints Tailwind padrão: `sm 640`, `md 768`, `lg 1024`.
-- Componente reutilizável `MobileListCard` evita duplicar markup nas 3 listas.
-- Nenhuma mudança de schema/store/auth — puramente UI/CSS.
-- Sem novas dependências.
+
+- Dependências `html2canvas` e `jspdf` já estão no projeto (usadas no preview atual) — nenhuma instalação nova.
+- A renderização off-screen usa um `<div style={{position:'fixed', left:'-10000px', top:0, width:'794px'}}>` (largura A4 @ 96dpi) anexado ao `document.body`, montado via `createRoot`, desmontado após salvar.
+- Mensagem WhatsApp limitada a ~3500 chars (limite seguro). Se exceder, fallback resumido + link para a URL do preview.
+- Sem mudanças de schema, store ou auth. Apenas frontend.
 
 ## Fora do escopo
-- PWA / instalação offline.
-- Reescrita visual / nova identidade.
-- Mudanças em lógica de negócio.
+
+- Trocar engine para PDF vetorial (pdfmake) — pode ser feito depois.
+- Capa, marca d'água, anexos.
+- Envio automático via API do WhatsApp (continua sendo `wa.me` que abre o cliente do usuário).
