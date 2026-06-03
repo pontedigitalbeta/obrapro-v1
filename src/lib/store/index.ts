@@ -154,7 +154,7 @@ export const useStore = create<State>()(
         return novo;
       },
     }),
-    { name: "obrapro-store", version: 1 }
+    { name: "obrapro-store", version: 1, skipHydration: true }
   )
 );
 
