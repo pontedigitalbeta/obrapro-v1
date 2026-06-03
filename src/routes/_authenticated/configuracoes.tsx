@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useStore } from "@/lib/store";
 import { Save, Upload, X } from "lucide-react";
 import { toast } from "sonner";
+import logoFull from "@/assets/obrapro-logo.png.asset.json";
 
 export const Route = createFileRoute("/_authenticated/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações — ObraPro" }] }),
