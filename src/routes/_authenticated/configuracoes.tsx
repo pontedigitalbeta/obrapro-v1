@@ -79,6 +79,7 @@ function ConfigPage() {
               )}
             </div>
             <div className="flex flex-col gap-2">
+              <FieldLabelWithHelp help={fieldHelp.configuracoes.logo}>Logo da empresa</FieldLabelWithHelp>
               <Label className="cursor-pointer">
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleLogo(e.target.files[0])} />
                 <Button asChild variant="outline" size="sm"><span><Upload className="mr-2 h-4 w-4" />Enviar logo</span></Button>
@@ -91,35 +92,35 @@ function ConfigPage() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="grid gap-2 md:col-span-2">
-              <Label>Nome da empresa / profissional *</Label>
+              <FieldLabelWithHelp help={fieldHelp.configuracoes.nome} required>Nome da empresa / profissional</FieldLabelWithHelp>
               <Input value={form.nome} onChange={(e) => set("nome", e.target.value)} />
             </div>
             <div className="grid gap-2">
-              <Label>CPF / CNPJ</Label>
+              <FieldLabelWithHelp help={fieldHelp.configuracoes.documento}>CPF / CNPJ</FieldLabelWithHelp>
               <Input value={form.documento} onChange={(e) => set("documento", e.target.value)} />
             </div>
             <div className="grid gap-2">
-              <Label>Responsável</Label>
+              <FieldLabelWithHelp help={fieldHelp.configuracoes.responsavel}>Responsável</FieldLabelWithHelp>
               <Input value={form.responsavel} onChange={(e) => set("responsavel", e.target.value)} />
             </div>
             <div className="grid gap-2">
-              <Label>Telefone / WhatsApp</Label>
+              <FieldLabelWithHelp help={fieldHelp.configuracoes.telefone}>Telefone / WhatsApp</FieldLabelWithHelp>
               <Input value={form.telefone} onChange={(e) => set("telefone", e.target.value)} placeholder="11999998888" />
             </div>
             <div className="grid gap-2">
-              <Label>E-mail</Label>
+              <FieldLabelWithHelp help={fieldHelp.configuracoes.email}>E-mail</FieldLabelWithHelp>
               <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
             </div>
             <div className="grid gap-2">
-              <Label>Cidade</Label>
+              <FieldLabelWithHelp help={fieldHelp.configuracoes.cidade}>Cidade</FieldLabelWithHelp>
               <Input value={form.cidade} onChange={(e) => set("cidade", e.target.value)} />
             </div>
             <div className="grid gap-2">
-              <Label>Estado</Label>
+              <FieldLabelWithHelp help={fieldHelp.configuracoes.estado}>Estado</FieldLabelWithHelp>
               <Input value={form.estado} onChange={(e) => set("estado", e.target.value)} placeholder="SP" />
             </div>
             <div className="grid gap-2 md:col-span-2">
-              <Label>Descrição curta da empresa</Label>
+              <FieldLabelWithHelp help={fieldHelp.configuracoes.descricao}>Descrição curta da empresa</FieldLabelWithHelp>
               <Textarea rows={3} value={form.descricao} onChange={(e) => set("descricao", e.target.value)} />
             </div>
           </div>

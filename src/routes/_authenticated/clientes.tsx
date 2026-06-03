@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FieldLabelWithHelp } from "@/components/field-label-with-help";
+import { fieldHelp } from "@/lib/help-content";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -67,25 +68,25 @@ function ClientesPage() {
             </DialogHeader>
             <div className="grid gap-4 py-2">
               <div className="grid gap-2">
-                <Label>Nome *</Label>
+                <FieldLabelWithHelp help={fieldHelp.clientes.nome} required>Nome</FieldLabelWithHelp>
                 <Input value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="grid gap-2">
-                  <Label>Telefone</Label>
+                  <FieldLabelWithHelp help={fieldHelp.clientes.telefone}>Telefone</FieldLabelWithHelp>
                   <Input value={form.telefone} onChange={(e) => setForm({ ...form, telefone: e.target.value })} placeholder="11999998888" />
                 </div>
                 <div className="grid gap-2">
-                  <Label>E-mail</Label>
+                  <FieldLabelWithHelp help={fieldHelp.clientes.email}>E-mail</FieldLabelWithHelp>
                   <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label>Endereço da obra</Label>
+                <FieldLabelWithHelp help={fieldHelp.clientes.enderecoObra}>Endereço da obra</FieldLabelWithHelp>
                 <Input value={form.enderecoObra} onChange={(e) => setForm({ ...form, enderecoObra: e.target.value })} />
               </div>
               <div className="grid gap-2">
-                <Label>Observações</Label>
+                <FieldLabelWithHelp help={fieldHelp.clientes.observacoes}>Observações</FieldLabelWithHelp>
                 <Textarea rows={3} value={form.observacoes} onChange={(e) => setForm({ ...form, observacoes: e.target.value })} />
               </div>
             </div>
