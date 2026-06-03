@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { InstallAppButton } from "@/components/install-app-button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -107,6 +108,17 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border">
+        {!collapsed && (
+          <div className="px-2 pb-1 pt-2">
+            <InstallAppButton
+              variant="outline"
+              size="sm"
+              fullWidth
+              hideWhenInstalled
+              className="border-sidebar-border bg-sidebar-accent/40 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            />
+          </div>
+        )}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton tooltip={displayName} className="cursor-default hover:bg-transparent">
