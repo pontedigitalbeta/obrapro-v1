@@ -8,7 +8,7 @@ import { Plus, FileText, Clock, CheckCircle2, DollarSign, Eye, Users, LifeBuoy }
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import logoIcon from "@/assets/obrapro-icon.png.asset.json";
-import { InstallAppButton } from "@/components/install-app-button";
+
 import { InfoTooltip } from "@/components/info-tooltip";
 import { fieldHelp } from "@/lib/help-content";
 
