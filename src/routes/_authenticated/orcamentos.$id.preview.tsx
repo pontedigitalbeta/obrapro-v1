@@ -187,6 +187,7 @@ function PreviewPage() {
               })}
             </tbody>
           </table>
+          </div>
 
           {/* Totals */}
           <div className="ml-auto mt-4 w-full max-w-xs space-y-1 text-sm">
