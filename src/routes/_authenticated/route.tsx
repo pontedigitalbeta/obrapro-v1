@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { useStore } from "@/lib/store";
+import logoFull from "@/assets/obrapro-logo.png.asset.json";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
