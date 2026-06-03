@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Users, FileText, Settings, LogOut, User } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Settings, LogOut, User, HelpCircle } from "lucide-react";
 import logoIcon from "@/assets/obrapro-icon.png.asset.json";
 import { useEffect, useState } from "react";
 import {
@@ -23,6 +23,7 @@ const items = [
   { title: "Orçamentos", url: "/orcamentos", icon: FileText },
   { title: "Clientes", url: "/clientes", icon: Users },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
+  { title: "Ajuda", url: "/ajuda", icon: HelpCircle },
 ];
 
 export function AppSidebar() {
