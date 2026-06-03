@@ -37,7 +37,7 @@ export async function gerarOrcamentoPdf(
     if (!target) throw new Error("Falha ao renderizar proposta");
 
     const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-      import("html2canvas"),
+      import("html2canvas-pro"),
       import("jspdf"),
     ]);
 
