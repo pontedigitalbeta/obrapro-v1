@@ -115,11 +115,12 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const path = useRouterState({ select: (r) => r.location.pathname });
   const isPreview = path.includes("/preview");
+  const hydrated = useStoreHydrated();
 
   return (
     <QueryClientProvider client={queryClient}>
       {isPreview ? (
-        <Outlet />
+        hydrated ? <Outlet /> : null
       ) : (
         <SidebarProvider>
           <div className="flex min-h-screen w-full bg-background">
@@ -130,7 +131,7 @@ function RootComponent() {
                 <span className="text-sm font-semibold text-muted-foreground">ObraPro Orçamentos</span>
               </header>
               <main className="flex-1 p-4 md:p-6 lg:p-8">
-                <Outlet />
+                {hydrated ? <Outlet /> : null}
               </main>
             </div>
           </div>
