@@ -24,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/orcamentos/")({
 function OrcamentosPage() {
   const orcamentos = useStore((s) => s.orcamentos);
   const clientes = useStore((s) => s.clientes);
+  const empresa = useStore((s) => s.empresa);
   const duplicate = useStore((s) => s.duplicateOrcamento);
   const remove = useStore((s) => s.deleteOrcamento);
   const navigate = useNavigate();
@@ -39,9 +40,52 @@ function OrcamentosPage() {
     return true;
   });
 
-  const renderActions = (o: typeof filtrados[number]) => (
+  const handlePdf = async (o: Orcamento) => {
+    const cli = clientes.find((c) => c.id === o.clienteId);
+    toast.loading("Gerando PDF...", { id: `pdf-${o.id}` });
+    try {
+      await gerarOrcamentoPdf(o, cli, empresa);
+      toast.success("PDF gerado!", { id: `pdf-${o.id}` });
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao gerar PDF", { id: `pdf-${o.id}` });
+    }
+  };
+
+  const handleWhats = (o: Orcamento) => {
+    const cli = clientes.find((c) => c.id === o.clienteId);
+    const r = abrirWhatsAppOrcamento(o, cli, empresa);
+    if (!r.ok) toast.error(r.reason);
+  };
+
+  const renderQuickActions = (o: Orcamento) => (
+    <>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => handlePdf(o)}
+        className="h-8 gap-1.5 px-2.5 text-xs"
+        title="Baixar PDF"
+      >
+        <FileDown className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">PDF</span>
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => handleWhats(o)}
+        className="h-8 gap-1.5 border-success/40 px-2.5 text-xs text-success hover:bg-success/10 hover:text-success"
+        title="Enviar por WhatsApp"
+      >
+        <MessageCircle className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">WhatsApp</span>
+      </Button>
+    </>
+  );
+
+  const renderActions = (o: Orcamento) => (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => navigate({ to: "/orcamentos/$id/preview", params: { id: o.id } })}>
           <Eye className="mr-2 h-4 w-4" />Visualizar proposta
