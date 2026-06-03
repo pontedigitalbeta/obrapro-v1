@@ -97,23 +97,23 @@ function PreviewPage() {
       {/* A4 page */}
       <div ref={pageRef} className="a4-page print-page text-[13px] leading-relaxed">
         {/* Header */}
-        <div className="flex items-start justify-between border-b-4 pb-4" style={{ borderColor: "#d97706" }}>
+        <div className="flex flex-col gap-3 border-b-4 pb-4 sm:flex-row sm:items-start sm:justify-between" style={{ borderColor: "#d97706" }}>
           <div className="flex items-center gap-3">
             {empresa.logoBase64 ? (
-              <img src={empresa.logoBase64} alt={empresa.nome} className="h-16 w-16 rounded object-contain" />
+              <img src={empresa.logoBase64} alt={empresa.nome} className="h-14 w-14 rounded object-contain sm:h-16 sm:w-16" />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded bg-slate-800 text-amber-400">
-                <HardHat className="h-8 w-8" />
+              <div className="flex h-14 w-14 items-center justify-center rounded bg-slate-800 text-amber-400 sm:h-16 sm:w-16">
+                <HardHat className="h-7 w-7 sm:h-8 sm:w-8" />
               </div>
             )}
-            <div>
-              <h1 className="text-xl font-bold text-slate-800">{empresa.nome}</h1>
-              <p className="text-xs text-slate-500">{empresa.descricao}</p>
+            <div className="min-w-0">
+              <h1 className="truncate text-lg font-bold text-slate-800 sm:text-xl">{empresa.nome}</h1>
+              <p className="truncate text-xs text-slate-500">{empresa.descricao}</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Proposta Comercial</p>
-            <p className="text-2xl font-bold text-slate-800">Nº {orcamento.numero}</p>
+          <div className="sm:text-right">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 sm:text-xs">Proposta Comercial</p>
+            <p className="text-xl font-bold text-slate-800 sm:text-2xl">Nº {orcamento.numero}</p>
             <p className="text-xs text-slate-500">{format(new Date(orcamento.data), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
           </div>
         </div>
