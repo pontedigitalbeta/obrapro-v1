@@ -7,6 +7,7 @@ import { useStore, calcTotal, formatBRL } from "@/lib/store";
 import { Plus, FileText, Clock, CheckCircle2, DollarSign, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import logoIcon from "@/assets/obrapro-icon.png.asset.json";
 
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({ meta: [{ title: "Dashboard — ObraPro" }] }),
