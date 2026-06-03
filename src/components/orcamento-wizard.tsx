@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { FieldLabelWithHelp } from "@/components/field-label-with-help";
 import { InfoTooltip } from "@/components/info-tooltip";
 import { fieldHelp } from "@/lib/help-content";
+import { abrirWhatsAppOrcamento } from "@/lib/whatsapp";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -81,9 +82,10 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
     if (!cliente?.telefone) { toast.error("Cliente sem telefone cadastrado"); return; }
     const id = save("enviado");
     if (!id) return;
-    const url = typeof window !== "undefined" ? window.location.origin : "";
-    const msg = `Olá ${cliente.nome}! Segue a proposta da ${empresa.nome} para *${form.titulo}*. Valor total: ${formatBRL(total)}. Veja a proposta completa: ${url}/orcamentos/${id}/preview`;
-    window.open(`https://wa.me/55${cliente.telefone.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`, "_blank");
+    const salvo = useStore.getState().orcamentos.find((o) => o.id === id);
+    if (!salvo) return;
+    const r = abrirWhatsAppOrcamento(salvo, cliente, empresa);
+    if (!r.ok) toast.error(r.reason);
   };
 
   const dateInput = (iso: string) => iso.slice(0, 10);
