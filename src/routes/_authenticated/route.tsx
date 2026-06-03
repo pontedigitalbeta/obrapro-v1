@@ -37,12 +37,12 @@ function AuthenticatedLayout() {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
-        <div className="flex flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-4">
             <SidebarTrigger />
-            <span className="text-sm font-semibold text-muted-foreground">ObraPro Orçamentos</span>
+            <span className="truncate text-sm font-semibold text-muted-foreground">ObraPro <span className="hidden sm:inline">Orçamentos</span></span>
           </header>
-          <main className="flex-1 p-4 md:p-6 lg:p-8">
+          <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8">
             {hydrated ? <Outlet /> : null}
           </main>
         </div>
