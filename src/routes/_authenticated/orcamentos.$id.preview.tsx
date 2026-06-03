@@ -125,7 +125,7 @@ function PreviewPage() {
         </div>
 
         {/* Data blocks */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Block title="Empresa">
             <p><strong>{empresa.nome}</strong></p>
             <p>{empresa.documento}</p>
