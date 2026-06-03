@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useEffect } from "react";
 
-export const Route = createFileRoute("/orcamentos/$id")({
+export const Route = createFileRoute("/_authenticated/orcamentos/$id")({
   head: () => ({ meta: [{ title: "Editar orçamento — ObraPro" }] }),
   component: EditarOrcamentoPage,
 });

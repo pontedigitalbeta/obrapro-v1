@@ -8,7 +8,7 @@ import { Plus, FileText, Clock, CheckCircle2, DollarSign, Eye } from "lucide-rea
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({ meta: [{ title: "Dashboard — ObraPro" }] }),
   component: Dashboard,
 });

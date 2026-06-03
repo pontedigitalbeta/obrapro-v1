@@ -1,8 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Users, FileText, Settings, HardHat } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Settings, HardHat, LogOut, User } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -12,6 +14,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const items = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -25,6 +29,28 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const path = useRouterState({ select: (r) => r.location.pathname });
   const isActive = (url: string) => (url === "/" ? path === "/" : path.startsWith(url));
+
+  const [user, setUser] = useState<{ email?: string; nome?: string } | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        setUser({
+          email: data.user.email ?? undefined,
+          nome: (data.user.user_metadata?.nome as string | undefined) ?? (data.user.user_metadata?.full_name as string | undefined),
+        });
+      }
+    });
+  }, []);
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) toast.error("Falha ao sair");
+    // onAuthStateChange in __root.tsx handles redirect to /auth.
+  };
+
+  const displayName = user?.nome || user?.email?.split("@")[0] || "Usuário";
+  const initials = displayName.slice(0, 2).toUpperCase();
 
   return (
     <Sidebar collapsible="icon">
@@ -60,6 +86,29 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="border-t border-sidebar-border">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton tooltip={displayName} className="cursor-default hover:bg-transparent">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                {initials || <User className="h-3.5 w-3.5" />}
+              </div>
+              {!collapsed && (
+                <div className="flex min-w-0 flex-col leading-tight">
+                  <span className="truncate text-sm font-medium">{displayName}</span>
+                  {user?.email && <span className="truncate text-xs text-muted-foreground">{user.email}</span>}
+                </div>
+              )}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleSignOut} tooltip="Sair">
+              <LogOut className="h-4 w-4" />
+              <span>Sair</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

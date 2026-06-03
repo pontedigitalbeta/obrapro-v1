@@ -4,27 +4,15 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
-import { useStore } from "@/lib/store";
-
-function useStoreHydrated() {
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => {
-    useStore.persist.rehydrate();
-    setHydrated(true);
-  }, []);
-  return hydrated;
-}
+import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -113,30 +101,22 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const path = useRouterState({ select: (r) => r.location.pathname });
-  const isPreview = path.includes("/preview");
-  const hydrated = useStoreHydrated();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("obrapro:current-user");
+          window.location.href = "/auth";
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
-      {isPreview ? (
-        hydrated ? <Outlet /> : null
-      ) : (
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full bg-background">
-            <AppSidebar />
-            <div className="flex flex-1 flex-col">
-              <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-                <SidebarTrigger />
-                <span className="text-sm font-semibold text-muted-foreground">ObraPro Orçamentos</span>
-              </header>
-              <main className="flex-1 p-4 md:p-6 lg:p-8">
-                {hydrated ? <Outlet /> : null}
-              </main>
-            </div>
-          </div>
-        </SidebarProvider>
-      )}
+      <Outlet />
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );

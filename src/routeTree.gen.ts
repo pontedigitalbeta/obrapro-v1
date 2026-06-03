@@ -9,82 +9,103 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
-import { Route as ClientesRouteImport } from './routes/clientes'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as OrcamentosIndexRouteImport } from './routes/orcamentos.index'
-import { Route as OrcamentosNovoRouteImport } from './routes/orcamentos.novo'
-import { Route as OrcamentosIdRouteImport } from './routes/orcamentos.$id'
-import { Route as OrcamentosIdPreviewRouteImport } from './routes/orcamentos.$id.preview'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
+import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
+import { Route as AuthenticatedOrcamentosIndexRouteImport } from './routes/_authenticated/orcamentos.index'
+import { Route as AuthenticatedOrcamentosNovoRouteImport } from './routes/_authenticated/orcamentos.novo'
+import { Route as AuthenticatedOrcamentosIdRouteImport } from './routes/_authenticated/orcamentos.$id'
+import { Route as AuthenticatedOrcamentosIdPreviewRouteImport } from './routes/_authenticated/orcamentos.$id.preview'
 
-const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
-  id: '/configuracoes',
-  path: '/configuracoes',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ClientesRoute = ClientesRouteImport.update({
-  id: '/clientes',
-  path: '/clientes',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const OrcamentosIndexRoute = OrcamentosIndexRouteImport.update({
-  id: '/orcamentos/',
-  path: '/orcamentos/',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedConfiguracoesRoute =
+  AuthenticatedConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedClientesRoute = AuthenticatedClientesRouteImport.update({
+  id: '/clientes',
+  path: '/clientes',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const OrcamentosNovoRoute = OrcamentosNovoRouteImport.update({
-  id: '/orcamentos/novo',
-  path: '/orcamentos/novo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrcamentosIdRoute = OrcamentosIdRouteImport.update({
-  id: '/orcamentos/$id',
-  path: '/orcamentos/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrcamentosIdPreviewRoute = OrcamentosIdPreviewRouteImport.update({
-  id: '/preview',
-  path: '/preview',
-  getParentRoute: () => OrcamentosIdRoute,
-} as any)
+const AuthenticatedOrcamentosIndexRoute =
+  AuthenticatedOrcamentosIndexRouteImport.update({
+    id: '/orcamentos/',
+    path: '/orcamentos/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOrcamentosNovoRoute =
+  AuthenticatedOrcamentosNovoRouteImport.update({
+    id: '/orcamentos/novo',
+    path: '/orcamentos/novo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOrcamentosIdRoute =
+  AuthenticatedOrcamentosIdRouteImport.update({
+    id: '/orcamentos/$id',
+    path: '/orcamentos/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOrcamentosIdPreviewRoute =
+  AuthenticatedOrcamentosIdPreviewRouteImport.update({
+    id: '/preview',
+    path: '/preview',
+    getParentRoute: () => AuthenticatedOrcamentosIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/clientes': typeof ClientesRoute
-  '/configuracoes': typeof ConfiguracoesRoute
-  '/orcamentos/$id': typeof OrcamentosIdRouteWithChildren
-  '/orcamentos/novo': typeof OrcamentosNovoRoute
-  '/orcamentos/': typeof OrcamentosIndexRoute
-  '/orcamentos/$id/preview': typeof OrcamentosIdPreviewRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/auth': typeof AuthRoute
+  '/clientes': typeof AuthenticatedClientesRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/orcamentos/$id': typeof AuthenticatedOrcamentosIdRouteWithChildren
+  '/orcamentos/novo': typeof AuthenticatedOrcamentosNovoRoute
+  '/orcamentos/': typeof AuthenticatedOrcamentosIndexRoute
+  '/orcamentos/$id/preview': typeof AuthenticatedOrcamentosIdPreviewRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/clientes': typeof ClientesRoute
-  '/configuracoes': typeof ConfiguracoesRoute
-  '/orcamentos/$id': typeof OrcamentosIdRouteWithChildren
-  '/orcamentos/novo': typeof OrcamentosNovoRoute
-  '/orcamentos': typeof OrcamentosIndexRoute
-  '/orcamentos/$id/preview': typeof OrcamentosIdPreviewRoute
+  '/auth': typeof AuthRoute
+  '/clientes': typeof AuthenticatedClientesRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/orcamentos/$id': typeof AuthenticatedOrcamentosIdRouteWithChildren
+  '/orcamentos/novo': typeof AuthenticatedOrcamentosNovoRoute
+  '/orcamentos': typeof AuthenticatedOrcamentosIndexRoute
+  '/orcamentos/$id/preview': typeof AuthenticatedOrcamentosIdPreviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/clientes': typeof ClientesRoute
-  '/configuracoes': typeof ConfiguracoesRoute
-  '/orcamentos/$id': typeof OrcamentosIdRouteWithChildren
-  '/orcamentos/novo': typeof OrcamentosNovoRoute
-  '/orcamentos/': typeof OrcamentosIndexRoute
-  '/orcamentos/$id/preview': typeof OrcamentosIdPreviewRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/clientes': typeof AuthenticatedClientesRoute
+  '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/orcamentos/$id': typeof AuthenticatedOrcamentosIdRouteWithChildren
+  '/_authenticated/orcamentos/novo': typeof AuthenticatedOrcamentosNovoRoute
+  '/_authenticated/orcamentos/': typeof AuthenticatedOrcamentosIndexRoute
+  '/_authenticated/orcamentos/$id/preview': typeof AuthenticatedOrcamentosIdPreviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/clientes'
     | '/configuracoes'
     | '/orcamentos/$id'
@@ -93,106 +114,139 @@ export interface FileRouteTypes {
     | '/orcamentos/$id/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
+    | '/auth'
     | '/clientes'
     | '/configuracoes'
+    | '/'
     | '/orcamentos/$id'
     | '/orcamentos/novo'
     | '/orcamentos'
     | '/orcamentos/$id/preview'
   id:
     | '__root__'
-    | '/'
-    | '/clientes'
-    | '/configuracoes'
-    | '/orcamentos/$id'
-    | '/orcamentos/novo'
-    | '/orcamentos/'
-    | '/orcamentos/$id/preview'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/clientes'
+    | '/_authenticated/configuracoes'
+    | '/_authenticated/'
+    | '/_authenticated/orcamentos/$id'
+    | '/_authenticated/orcamentos/novo'
+    | '/_authenticated/orcamentos/'
+    | '/_authenticated/orcamentos/$id/preview'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ClientesRoute: typeof ClientesRoute
-  ConfiguracoesRoute: typeof ConfiguracoesRoute
-  OrcamentosIdRoute: typeof OrcamentosIdRouteWithChildren
-  OrcamentosNovoRoute: typeof OrcamentosNovoRoute
-  OrcamentosIndexRoute: typeof OrcamentosIndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/configuracoes': {
-      id: '/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/configuracoes'
-      preLoaderRoute: typeof ConfiguracoesRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/clientes': {
-      id: '/clientes'
-      path: '/clientes'
-      fullPath: '/clientes'
-      preLoaderRoute: typeof ClientesRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/orcamentos/': {
-      id: '/orcamentos/'
+    '/_authenticated/configuracoes': {
+      id: '/_authenticated/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/clientes': {
+      id: '/_authenticated/clientes'
+      path: '/clientes'
+      fullPath: '/clientes'
+      preLoaderRoute: typeof AuthenticatedClientesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/orcamentos/': {
+      id: '/_authenticated/orcamentos/'
       path: '/orcamentos'
       fullPath: '/orcamentos/'
-      preLoaderRoute: typeof OrcamentosIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedOrcamentosIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/orcamentos/novo': {
-      id: '/orcamentos/novo'
+    '/_authenticated/orcamentos/novo': {
+      id: '/_authenticated/orcamentos/novo'
       path: '/orcamentos/novo'
       fullPath: '/orcamentos/novo'
-      preLoaderRoute: typeof OrcamentosNovoRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedOrcamentosNovoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/orcamentos/$id': {
-      id: '/orcamentos/$id'
+    '/_authenticated/orcamentos/$id': {
+      id: '/_authenticated/orcamentos/$id'
       path: '/orcamentos/$id'
       fullPath: '/orcamentos/$id'
-      preLoaderRoute: typeof OrcamentosIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedOrcamentosIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/orcamentos/$id/preview': {
-      id: '/orcamentos/$id/preview'
+    '/_authenticated/orcamentos/$id/preview': {
+      id: '/_authenticated/orcamentos/$id/preview'
       path: '/preview'
       fullPath: '/orcamentos/$id/preview'
-      preLoaderRoute: typeof OrcamentosIdPreviewRouteImport
-      parentRoute: typeof OrcamentosIdRoute
+      preLoaderRoute: typeof AuthenticatedOrcamentosIdPreviewRouteImport
+      parentRoute: typeof AuthenticatedOrcamentosIdRoute
     }
   }
 }
 
-interface OrcamentosIdRouteChildren {
-  OrcamentosIdPreviewRoute: typeof OrcamentosIdPreviewRoute
+interface AuthenticatedOrcamentosIdRouteChildren {
+  AuthenticatedOrcamentosIdPreviewRoute: typeof AuthenticatedOrcamentosIdPreviewRoute
 }
 
-const OrcamentosIdRouteChildren: OrcamentosIdRouteChildren = {
-  OrcamentosIdPreviewRoute: OrcamentosIdPreviewRoute,
+const AuthenticatedOrcamentosIdRouteChildren: AuthenticatedOrcamentosIdRouteChildren =
+  {
+    AuthenticatedOrcamentosIdPreviewRoute:
+      AuthenticatedOrcamentosIdPreviewRoute,
+  }
+
+const AuthenticatedOrcamentosIdRouteWithChildren =
+  AuthenticatedOrcamentosIdRoute._addFileChildren(
+    AuthenticatedOrcamentosIdRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
+  AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedOrcamentosIdRoute: typeof AuthenticatedOrcamentosIdRouteWithChildren
+  AuthenticatedOrcamentosNovoRoute: typeof AuthenticatedOrcamentosNovoRoute
+  AuthenticatedOrcamentosIndexRoute: typeof AuthenticatedOrcamentosIndexRoute
 }
 
-const OrcamentosIdRouteWithChildren = OrcamentosIdRoute._addFileChildren(
-  OrcamentosIdRouteChildren,
-)
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedClientesRoute: AuthenticatedClientesRoute,
+  AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedOrcamentosIdRoute: AuthenticatedOrcamentosIdRouteWithChildren,
+  AuthenticatedOrcamentosNovoRoute: AuthenticatedOrcamentosNovoRoute,
+  AuthenticatedOrcamentosIndexRoute: AuthenticatedOrcamentosIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  ClientesRoute: ClientesRoute,
-  ConfiguracoesRoute: ConfiguracoesRoute,
-  OrcamentosIdRoute: OrcamentosIdRouteWithChildren,
-  OrcamentosNovoRoute: OrcamentosNovoRoute,
-  OrcamentosIndexRoute: OrcamentosIndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
