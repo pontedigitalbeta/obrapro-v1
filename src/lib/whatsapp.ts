@@ -6,6 +6,8 @@ import { calcSubtotal, calcDesconto, calcTotal, formatBRL } from "@/lib/store";
 
 const MAX_LEN = 3500;
 
+const clean = (v: string | undefined | null): string => (v ?? "").replace(/\s+/g, " ").trim();
+
 export function montarMensagemOrcamento(
   orcamento: Orcamento,
   cliente: Cliente | undefined,
@@ -15,88 +17,119 @@ export function montarMensagemOrcamento(
   const desconto = calcDesconto(subtotal, orcamento.descontoTipo, orcamento.descontoValor);
   const total = calcTotal(orcamento);
 
+  const nomeCliente = clean(cliente?.nome);
+  const nomeEmpresa = clean(empresa.nome) || "nossa empresa";
+  const responsavel = clean(empresa.responsavel);
+  const telefoneEmpresa = clean(empresa.telefone);
+
+  const titulo = clean(orcamento.titulo);
+  const tipoServico = clean(orcamento.tipoServico);
+  const endereco = clean(orcamento.enderecoObra) || clean(cliente?.enderecoObra);
+  const escopo = clean(orcamento.descricaoEscopo);
+  const prazo = clean(orcamento.prazoExecucao);
+  const pagamento = clean(orcamento.formaPagamento);
+  const garantia = clean(orcamento.garantia);
+
   const itensPorCategoria = (Object.keys(CATEGORIA_LABELS) as ItemCategoria[])
     .map((cat) => ({ cat, itens: orcamento.itens.filter((i) => i.categoria === cat) }))
     .filter((g) => g.itens.length > 0);
 
   const linhas: string[] = [];
-  const saudacao = cliente?.nome ? `Olá, ${cliente.nome.split(" ")[0]}!` : "Olá!";
-  linhas.push(saudacao);
+
+  linhas.push(nomeCliente ? `Olá, ${nomeCliente}.` : "Olá.");
   linhas.push("");
-  linhas.push(`Segue a proposta da *${empresa.nome || "nossa empresa"}*:`);
-  linhas.push("");
-  linhas.push(`📄 *Proposta Nº ${orcamento.numero}*`);
-  linhas.push(`📅 ${format(new Date(orcamento.data), "dd/MM/yyyy", { locale: ptBR })}`);
-  linhas.push(`🛠️ *${orcamento.titulo}*`);
-  if (orcamento.tipoServico) linhas.push(`_${orcamento.tipoServico}_`);
-  if (orcamento.enderecoObra || cliente?.enderecoObra) {
-    linhas.push(`📍 ${orcamento.enderecoObra || cliente?.enderecoObra}`);
-  }
+  linhas.push(`Segue a proposta comercial da ${nomeEmpresa} para análise.`);
   linhas.push("");
 
-  if (orcamento.descricaoEscopo) {
-    linhas.push("*Escopo do serviço:*");
-    linhas.push(orcamento.descricaoEscopo);
+  // Dados da proposta
+  linhas.push(`*Proposta Nº ${clean(orcamento.numero)}*`);
+  linhas.push(`Data: ${format(new Date(orcamento.data), "dd/MM/yyyy", { locale: ptBR })}`);
+  if (titulo) linhas.push(`Serviço: ${titulo}`);
+  if (tipoServico) linhas.push(`Tipo: ${tipoServico}`);
+  if (endereco) linhas.push(`Local: ${endereco}`);
+
+  // Escopo
+  if (escopo) {
     linhas.push("");
+    linhas.push("*Escopo do serviço*");
+    linhas.push(escopo);
   }
 
-  linhas.push("*Itens:*");
-  for (const { cat, itens } of itensPorCategoria) {
-    linhas.push(`▸ _${CATEGORIA_LABELS[cat]}_`);
-    for (const i of itens) {
-      const tot = i.quantidade * i.valorUnitario;
-      linhas.push(
-        `  • ${i.descricao || "—"} — ${i.quantidade} ${i.unidade} × ${formatBRL(i.valorUnitario)} = *${formatBRL(tot)}*`
-      );
+  // Itens
+  if (itensPorCategoria.length > 0) {
+    linhas.push("");
+    linhas.push("*Itens da proposta*");
+    for (const { cat, itens } of itensPorCategoria) {
+      linhas.push("");
+      linhas.push(CATEGORIA_LABELS[cat]);
+      linhas.push("");
+      for (const i of itens) {
+        const desc = clean(i.descricao) || "—";
+        const un = clean(i.unidade) || "un";
+        const tot = i.quantidade * i.valorUnitario;
+        linhas.push(
+          `- ${desc}: ${i.quantidade} ${un} x ${formatBRL(i.valorUnitario)} = ${formatBRL(tot)}`,
+        );
+      }
     }
   }
-  linhas.push("");
 
+  // Totais
+  linhas.push("");
   linhas.push(`Subtotal: ${formatBRL(subtotal)}`);
   if (desconto > 0) {
     const sufixo = orcamento.descontoTipo === "percentual" ? ` (${orcamento.descontoValor}%)` : "";
-    linhas.push(`Desconto${sufixo}: − ${formatBRL(desconto)}`);
+    linhas.push(`Desconto${sufixo}: ${formatBRL(desconto)}`);
   }
-  linhas.push(`💰 *VALOR TOTAL: ${formatBRL(total)}*`);
   linhas.push("");
+  linhas.push(`*Valor total: ${formatBRL(total)}*`);
 
-  const cond: string[] = [];
-  if (orcamento.prazoExecucao) cond.push(`⏱️ *Prazo:* ${orcamento.prazoExecucao}`);
-  if (orcamento.formaPagamento) cond.push(`💳 *Pagamento:* ${orcamento.formaPagamento}`);
-  if (orcamento.garantia) cond.push(`🛡️ *Garantia:* ${orcamento.garantia}`);
-  cond.push(`✅ *Validade:* ${format(new Date(orcamento.validade), "dd/MM/yyyy", { locale: ptBR })}`);
-  if (orcamento.incluso) cond.push(`✔️ *Inclui:* ${orcamento.incluso}`);
-  if (orcamento.naoIncluso) cond.push(`❌ *Não inclui:* ${orcamento.naoIncluso}`);
-  linhas.push(...cond);
-
-  if (orcamento.observacoesFinais) {
-    linhas.push("");
-    linhas.push(`📝 *Observações:* ${orcamento.observacoesFinais}`);
-  }
-
+  // Condições comerciais
+  const condicoes: string[] = [];
+  if (prazo) condicoes.push(`Prazo de execução: ${prazo}`);
+  if (pagamento) condicoes.push(`Forma de pagamento: ${pagamento}`);
+  if (garantia) condicoes.push(`Garantia: ${garantia}`);
+  condicoes.push(
+    `Validade da proposta: ${format(new Date(orcamento.validade), "dd/MM/yyyy", { locale: ptBR })}`,
+  );
   linhas.push("");
-  linhas.push("Qualquer dúvida, estou à disposição!");
-  if (empresa.responsavel || empresa.telefone) {
-    linhas.push(`— ${empresa.responsavel || empresa.nome}${empresa.telefone ? ` • ${empresa.telefone}` : ""}`);
-  }
+  linhas.push("*Condições comerciais*");
+  linhas.push(...condicoes);
+
+  // Assinatura
+  linhas.push("");
+  linhas.push("Fico à disposição para qualquer dúvida ou ajuste necessário.");
+  linhas.push("");
+  linhas.push("Atenciosamente,");
+  if (responsavel) linhas.push(responsavel);
+  linhas.push(nomeEmpresa);
+  if (telefoneEmpresa) linhas.push(telefoneEmpresa);
 
   let msg = linhas.join("\n");
+
   if (msg.length > MAX_LEN) {
-    // fallback resumido
     const resumo = [
-      saudacao,
+      nomeCliente ? `Olá, ${nomeCliente}.` : "Olá.",
       "",
-      `Segue a proposta da *${empresa.nome}*:`,
-      `📄 *Nº ${orcamento.numero}* — ${orcamento.titulo}`,
-      `📅 ${format(new Date(orcamento.data), "dd/MM/yyyy", { locale: ptBR })}`,
-      `💰 *Valor total: ${formatBRL(total)}*`,
-      `✅ Validade: ${format(new Date(orcamento.validade), "dd/MM/yyyy", { locale: ptBR })}`,
+      `Segue a proposta comercial da ${nomeEmpresa} para análise.`,
       "",
-      "Posso enviar o PDF detalhado em seguida. Qualquer dúvida estou à disposição!",
-      empresa.responsavel ? `— ${empresa.responsavel}` : "",
-    ].filter(Boolean).join("\n");
-    msg = resumo;
+      `*Proposta Nº ${clean(orcamento.numero)}*`,
+      `Data: ${format(new Date(orcamento.data), "dd/MM/yyyy", { locale: ptBR })}`,
+      titulo ? `Serviço: ${titulo}` : "",
+      "",
+      `*Valor total: ${formatBRL(total)}*`,
+      `Validade da proposta: ${format(new Date(orcamento.validade), "dd/MM/yyyy", { locale: ptBR })}`,
+      "",
+      "Posso enviar o PDF detalhado em seguida. Fico à disposição para qualquer dúvida.",
+      "",
+      "Atenciosamente,",
+      responsavel || "",
+      nomeEmpresa,
+      telefoneEmpresa || "",
+    ].filter((l) => l !== "" || true).join("\n");
+    msg = resumo.replace(/\n{3,}/g, "\n\n");
   }
+
   return msg;
 }
 
