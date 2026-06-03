@@ -220,7 +220,7 @@ function PreviewPage() {
         </Section>
 
         {/* Assinatura */}
-        <div className="mt-12 grid grid-cols-2 gap-12 pt-8">
+        <div className="mt-10 grid grid-cols-1 gap-8 pt-8 sm:mt-12 sm:grid-cols-2 sm:gap-12">
           <div className="text-center">
             <div className="border-t border-slate-400 pt-2 text-xs text-slate-600">
               <p className="font-semibold text-slate-800">{empresa.responsavel}</p>
