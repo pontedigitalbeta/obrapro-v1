@@ -39,9 +39,9 @@ function AuthenticatedLayout() {
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-4">
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-white px-3 md:h-16 md:px-4">
             <SidebarTrigger />
-            <img src={logoFull.url} alt="ObraPro Orçamentos" className="h-7 w-auto object-contain" />
+            <img src={logoFull.url} alt="ObraPro" className="h-8 w-auto object-contain md:h-10" />
           </header>
           <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8">
             {hydrated ? <Outlet /> : null}
