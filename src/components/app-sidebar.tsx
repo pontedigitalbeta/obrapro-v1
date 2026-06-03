@@ -7,7 +7,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -25,7 +24,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, isMobile, setOpen, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const path = useRouterState({ select: (r) => r.location.pathname });
   const isActive = (url: string) => (url === "/" ? path === "/" : path.startsWith(url));
@@ -46,7 +45,12 @@ export function AppSidebar() {
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) toast.error("Falha ao sair");
-    // onAuthStateChange in __root.tsx handles redirect to /auth.
+  };
+
+  const handleNavClick = (url: string) => {
+    if (isActive(url)) return;
+    if (isMobile) setOpenMobile(false);
+    else setOpen(false);
   };
 
   const displayName = user?.nome || user?.email?.split("@")[0] || "Usuário";
@@ -69,19 +73,38 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title}>
-                    <Link to={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+            <SidebarMenu className="gap-1.5 px-1 py-2">
+              {items.map((item) => {
+                const active = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      size="lg"
+                      tooltip={item.title}
+                      className={[
+                        "relative h-11 rounded-lg px-3 transition-all",
+                        "before:absolute before:left-0 before:top-1/2 before:h-6 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-transparent before:transition-colors",
+                        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        "data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-sm data-[active=true]:font-semibold",
+                        "data-[active=true]:hover:bg-primary data-[active=true]:hover:text-primary-foreground",
+                        "data-[active=true]:before:bg-accent",
+                      ].join(" ")}
+                    >
+                      <Link
+                        to={item.url}
+                        onClick={() => handleNavClick(item.url)}
+                        className="flex items-center gap-3"
+                      >
+                        <item.icon className={`h-5 w-5 shrink-0 transition-transform ${active ? "scale-110" : ""}`} />
+                        <span className="text-[15px] font-medium">{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

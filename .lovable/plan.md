@@ -1,61 +1,27 @@
-## Problema
+## Objetivo
+Refinar o menu lateral (`src/components/app-sidebar.tsx`) para deixar as opções mais destacadas visualmente e fazer o menu minimizar automaticamente ao selecionar um item.
 
-Hoje `gerarOrcamentoPdf` rasteriza o `PropostaA4` inteiro em **um único canvas** e o jsPDF apenas desloca a imagem para baixo a cada página A4. Resultado: linhas da tabela, totais e blocos de condições são cortados ao meio entre páginas.
+## Mudanças
 
-## Solução: paginação por blocos com pontos de quebra seguros
+### 1. Destaque visual das opções (`src/components/app-sidebar.tsx`)
+- Aumentar a altura dos itens do menu (de padrão ~32px para ~44px) com mais padding horizontal.
+- Aumentar o tamanho do ícone (de `h-4 w-4` para `h-5 w-5`) e do texto (`text-sm` → `text-[15px] font-medium`).
+- Item ativo: fundo sólido `bg-primary text-primary-foreground` com cantos arredondados, ícone com peso visual maior e uma barra indicadora à esquerda (`before:` pseudo-elemento de 3px usando `bg-accent`).
+- Item inativo: hover com `bg-sidebar-accent` suave + leve transição de cor no ícone.
+- Aumentar espaçamento vertical entre itens (`gap-1` no `SidebarMenu`).
+- Ocultar o `SidebarGroupLabel` "Menu" (redundante) ou estilizá-lo como caption discreto em uppercase.
 
-Em vez de fatiar cega­mente a cada 297 mm, vamos medir o DOM, encontrar **boundaries seguros** (entre blocos e entre linhas de tabela) e cortar o canvas só nesses pontos. Também adicionamos margens, cabeçalho repetido e rodapé com paginação.
+### 2. Auto-minimizar ao selecionar (`src/components/app-sidebar.tsx`)
+- Usar `useSidebar()` para acessar `setOpen` (desktop) e `setOpenMobile` (mobile).
+- No `onClick` de cada `Link`, chamar `setOpen(false)` em telas desktop e `setOpenMobile(false)` em mobile, exceto se o item já estiver ativo (evita colapsar/reabrir desnecessariamente).
+- O ícone permanece visível porque o `Sidebar` já usa `collapsible="icon"`, então "minimizar" = colapsar para a faixa de ícones, mantendo navegação acessível.
 
-### 1. Marcar pontos de quebra no `PropostaA4`
-Arquivo: `src/components/proposta-a4.tsx`
-
-- Adicionar `data-pdf-block` nos containers de nível superior: header, título, blocos empresa/cliente, escopo, cada grupo de categoria de itens, bloco de totais, condições, observações, assinatura, rodapé.
-- Adicionar `data-pdf-row` em cada `<tr>` da tabela de itens (incluindo cabeçalho da tabela, linhas de item, linha de subtotal por categoria).
-- Adicionar `data-pdf-keep-with-next` no header da tabela e no header de categoria, pra nunca ficarem órfãos no fim de página.
-- Sem mudança visual no preview — só atributos.
-
-### 2. Reescrever a geração em `src/lib/pdf.ts`
-
-Novo fluxo:
-
-```text
-render off-screen (largura 794px = A4 @ 96dpi, padding interno)
-    ↓
-html2canvas-pro → canvas único (scale: 2)
-    ↓
-coletar Y de TODOS os elementos [data-pdf-block] e [data-pdf-row]
-em coordenadas do canvas (offsetTop * scale)
-    ↓
-para cada página:
-  • alturaUtil = A4 - margens topo/base (em px @ scale)
-  • escolher o maior boundary Y ≤ (cursor + alturaUtil)
-  • se nenhum boundary couber (bloco gigante), force-cut em (cursor + alturaUtil)
-  • desenhar slice do canvas em um canvas-página, exportar JPEG, addImage
-  • desenhar header (logo + nº proposta) e footer (página X / Y, empresa)
-    diretamente no pdf via pdf.text / pdf.setFillColor
-```
-
-Margens A4: 10 mm topo (após header), 12 mm base (antes footer), 8 mm laterais. Header/footer desenhados pelo jsPDF (texto vetorial nítido) — não pelo canvas.
-
-### 3. CSS de impressão consistente
-Arquivo: `src/components/proposta-a4.tsx` (classes Tailwind) + `src/styles.css` (regras `@media print` já existentes, se houver — ajustar se necessário)
-
-- Garantir `break-inside: avoid` nas linhas e blocos (CSS puro, para também ajudar o `window.print()` do botão Imprimir).
-- Largura fixa do container off-screen: `width: 794px`, padding interno equivalente a 8 mm laterais — assim o canvas já vem na proporção certa pro A4.
-
-### 4. Empty-page guard
-Se o último boundary escolhido = cursor (boundary não avançou), avançar com corte forçado pra evitar loop infinito.
+## Fora de escopo
+- Não mexer no header, footer (perfil/logout) ou estrutura de rotas.
+- Não alterar tokens globais em `styles.css` (apenas classes utilitárias no componente). Se for necessário um token novo de destaque, adicionar de forma mínima.
+- Sem novas dependências.
 
 ## Detalhes técnicos
-
-- A4 retrato: 210 × 297 mm. Em px @ 96dpi: 794 × 1123. Com `scale: 2` o canvas tem 1588 × 2246 por "página visual".
-- Coordenadas: como `html2canvas-pro` rasteriza o nó em escala fiel, `element.offsetTop` (relativo ao container raiz) × `scale` = Y no canvas. Usamos `getBoundingClientRect()` relativos ao container pra ser robusto a margens.
-- Header repetido no PDF mostra: logo (se houver, do `empresa.logoBase64`), nome da empresa à esquerda, nº da proposta + data à direita, linha âmbar fina embaixo. Só aparece da **página 2** em diante (página 1 já tem o header completo da proposta).
-- Footer em todas as páginas: `Página X de Y · {empresa.nome} · {empresa.telefone}`.
-- Nome do arquivo e fluxo de toast permanecem iguais.
-
-## Fora do escopo
-
-- Trocar pra PDF vetorial (pdfmake/jspdf nativo).
-- Sumário / capa / marca d'água.
-- Quebra entre páginas no `window.print()` (já razoável, mas não é o foco).
+- `SidebarMenuButton` aceita `size="lg"` (variante já existente no shadcn sidebar) — usar para altura/tipografia maior.
+- Indicador ativo via `data-[active=true]:` variantes do Tailwind, lendo `isActive` já passado ao botão.
+- `setOpen` vs `setOpenMobile`: o hook `useSidebar` expõe `isMobile`; usar para decidir qual setter chamar.
