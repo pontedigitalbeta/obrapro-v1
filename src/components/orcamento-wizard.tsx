@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { FieldLabelWithHelp } from "@/components/field-label-with-help";
 import { InfoTooltip } from "@/components/info-tooltip";
 import { fieldHelp } from "@/lib/help-content";
+import { abrirWhatsAppOrcamento } from "@/lib/whatsapp";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
