@@ -48,7 +48,6 @@ function Dashboard() {
           </div>
         </div>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-          <InstallAppButton variant="outline" size="default" hideWhenInstalled className="w-full sm:w-auto" />
           <Button asChild className="w-full bg-accent text-accent-foreground shadow-md hover:bg-accent/90 sm:w-auto">
             <Link to="/orcamentos/novo"><Plus className="mr-2 h-4 w-4" />Novo Orçamento</Link>
           </Button>
