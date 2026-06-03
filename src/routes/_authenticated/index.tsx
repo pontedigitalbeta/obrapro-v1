@@ -40,7 +40,7 @@ function Dashboard() {
           <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Visão geral dos seus orçamentos</p>
         </div>
-        <Button asChild className="w-full bg-accent text-accent-foreground shadow-md hover:bg-accent/90 sm:w-auto sm:size-lg">
+        <Button asChild className="w-full bg-accent text-accent-foreground shadow-md hover:bg-accent/90 sm:w-auto">
           <Link to="/orcamentos/novo"><Plus className="mr-2 h-4 w-4" />Novo Orçamento</Link>
         </Button>
       </div>
