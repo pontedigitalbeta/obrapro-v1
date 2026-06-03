@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { OrcamentoWizard } from "@/components/orcamento-wizard";
 import { ArrowLeft } from "lucide-react";
 
-export const Route = createFileRoute("/orcamentos/novo")({
+export const Route = createFileRoute("/_authenticated/orcamentos/novo")({
   head: () => ({ meta: [{ title: "Novo orçamento — ObraPro" }] }),
   component: NovoOrcamentoPage,
 });

@@ -9,7 +9,7 @@ import { useStore } from "@/lib/store";
 import { Save, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/configuracoes")({
+export const Route = createFileRoute("/_authenticated/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações — ObraPro" }] }),
   component: ConfigPage,
 });
