@@ -344,36 +344,36 @@ export function OrcamentoWizard({ orcamentoId }: { orcamentoId?: string }) {
                 <Field label="Pagamento" value={form.formaPagamento || "—"} />
               </div>
               <Separator />
-              <div className="flex items-center justify-between rounded-lg bg-accent/10 p-4">
+              <div className="flex flex-col gap-3 rounded-lg bg-accent/10 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Valor total da proposta</p>
-                  <p className="text-3xl font-bold">{formatBRL(total)}</p>
+                  <p className="text-2xl font-bold sm:text-3xl">{formatBRL(total)}</p>
                 </div>
-                <div className="text-right text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground sm:text-right">
                   <p>{form.itens.length} itens</p>
                   <p>Status: <span className="font-medium text-foreground">{STATUS_LABELS[form.status]}</span></p>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={() => save()} variant="outline"><Save className="mr-2 h-4 w-4" />Salvar rascunho</Button>
-                <Button onClick={goPreview}><Eye className="mr-2 h-4 w-4" />Visualizar proposta</Button>
-                <Button onClick={goPreview} className="bg-accent text-accent-foreground hover:bg-accent/90"><FileDown className="mr-2 h-4 w-4" />Gerar PDF</Button>
-                <Button onClick={enviarWhatsApp} className="bg-success text-success-foreground hover:bg-success/90"><MessageCircle className="mr-2 h-4 w-4" />Enviar por WhatsApp</Button>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:flex-wrap">
+                <Button onClick={() => save()} variant="outline" className="w-full sm:w-auto"><Save className="mr-2 h-4 w-4" />Salvar rascunho</Button>
+                <Button onClick={goPreview} className="w-full sm:w-auto"><Eye className="mr-2 h-4 w-4" />Visualizar</Button>
+                <Button onClick={goPreview} className="w-full bg-accent text-accent-foreground hover:bg-accent/90 sm:w-auto"><FileDown className="mr-2 h-4 w-4" />Gerar PDF</Button>
+                <Button onClick={enviarWhatsApp} className="w-full bg-success text-success-foreground hover:bg-success/90 sm:w-auto"><MessageCircle className="mr-2 h-4 w-4" />WhatsApp</Button>
               </div>
             </div>
           )}
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between">
-        <Button variant="outline" onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <Button variant="outline" onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1} className="w-full sm:w-auto">
           <ArrowLeft className="mr-2 h-4 w-4" />Voltar
         </Button>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => save()}><Save className="mr-2 h-4 w-4" />Salvar</Button>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button variant="outline" onClick={() => save()} className="w-full sm:w-auto"><Save className="mr-2 h-4 w-4" />Salvar</Button>
           {step < 5 && (
-            <Button onClick={() => setStep(Math.min(5, step + 1))}>
+            <Button onClick={() => setStep(Math.min(5, step + 1))} className="w-full sm:w-auto">
               Próximo<ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           )}
