@@ -1,61 +1,56 @@
-# Plano: Login e cadastro no primeiro acesso
+# Mobile-first responsivo
 
-Ativar Lovable Cloud (backend) para autenticação real com email/senha + Google, perfis de usuário e isolamento de dados por usuário via RLS.
+Objetivo: deixar o ObraPro perfeitamente usável em telas pequenas (≥320px), mantendo o desktop intacto.
 
-## 1. Ativar Lovable Cloud
-Banco, auth e secrets gerenciados (necessário para login real e Google OAuth).
+## O que muda
 
-## 2. Banco de dados (migrations)
+### 1. Layout autenticado (`_authenticated/route.tsx` + `app-sidebar.tsx`)
+- Sidebar já é `collapsible="icon"` no desktop. No mobile vira drawer (off-canvas) controlado pelo `SidebarTrigger` — garantir que o trigger fica sempre visível no header.
+- Header sticky: ajustar padding (`px-3 md:px-4`), reduzir texto secundário em telas pequenas (esconder "ObraPro Orçamentos" em `<sm`, mostrar só logo+título curto).
+- Main: padding `p-3 sm:p-4 md:p-6 lg:p-8`.
 
-**Tabela `profiles`** (1:1 com `auth.users`)
-- `id uuid PK` → FK `auth.users(id) ON DELETE CASCADE`
-- `nome text`, `telefone text`, `cargo text`, `avatar_url text`
-- `created_at`, `updated_at`
-- RLS: usuário lê/atualiza apenas o próprio perfil
-- Trigger `handle_new_user()` cria profile automaticamente no signup
+### 2. Tabelas (Dashboard, Orçamentos, Clientes)
+Tabelas com 6–7 colunas estouram no mobile mesmo com scroll. Estratégia híbrida:
+- `<md`: renderizar uma lista de **cards** (um card por orçamento/cliente) com as infos essenciais (nº, título, cliente, valor, status, menu de ações).
+- `≥md`: manter a `<Table>` atual.
 
-**Tabelas de dados** (`clientes`, `orcamentos`, `empresa`)
-- Adicionar coluna `user_id uuid NOT NULL` referenciando `auth.users(id)`
-- RLS: `SELECT/INSERT/UPDATE/DELETE` apenas onde `user_id = auth.uid()`
-- GRANTs para `authenticated` + `service_role`
+Aplica a:
+- `_authenticated/index.tsx` (Últimos orçamentos)
+- `_authenticated/orcamentos.index.tsx`
+- `_authenticated/clientes.tsx`
 
-## 3. Configurar Google OAuth
-Chamar `configure_social_auth` com `providers: ["google"]`.
+### 3. Filtros e toolbars
+- Barra de busca + selects: já tem `flex-col sm:flex-row`. Confirmar que botão "Novo" ocupa largura total no mobile (`w-full sm:w-auto`).
+- Títulos: `text-xl sm:text-2xl md:text-3xl` para evitar quebra feia.
 
-## 4. Rotas
+### 4. Wizard de orçamento (`orcamento-wizard.tsx`)
+- Stepper: no mobile, mostrar só o passo atual + "Passo X de 5" em vez dos 5 chips lado a lado.
+- Grids de campos: trocar `grid-cols-2` para `grid-cols-1 sm:grid-cols-2`.
+- Tabela de itens (passo 3): no mobile, render como cards empilhados com inputs full-width; no desktop mantém tabela.
+- Botões de navegação (Voltar/Avançar/Salvar/WhatsApp/PDF): empilhar (`flex-col sm:flex-row`), todos `w-full sm:w-auto`, agrupar ações secundárias.
 
-- `src/routes/auth.tsx` (pública) — tabs **Entrar** / **Criar conta**
-  - Email/senha (zod validation, mín. 6 caracteres)
-  - Botão "Continuar com Google" via broker `lovable.auth.signInWithOAuth("google")`
-  - Após login → redirect `/`
-- `src/routes/_authenticated/route.tsx` — gate gerenciado (`ssr: false`, redireciona para `/auth`)
-- Mover rotas existentes para dentro de `_authenticated/`:
-  - `index.tsx` (dashboard), `clientes.tsx`, `orcamentos.*`, `configuracoes.tsx`
-- Manter `orcamentos.$id.preview.tsx` acessível (para visualização da proposta — decidir se público ou autenticado; manter autenticado por enquanto)
+### 5. Preview do orçamento (`orcamentos.$id.preview.tsx`)
+- Barra de ações topo: stack no mobile.
+- Documento A4: já tem largura fixa para impressão — adicionar `max-w-full overflow-x-auto` no wrapper e reduzir paddings internos em mobile (`p-6 md:p-12`).
+- Tabela de itens da proposta: scroll horizontal com indicação visual.
 
-## 5. Migrar store local → Supabase
+### 6. Auth (`routes/auth.tsx`) e Configurações
+- Card de auth: `max-w-md w-full`, padding reduzido em mobile.
+- Tabs e formulários: inputs full-width já por padrão, validar.
+- Configurações: grids 2-col → 1-col em mobile.
 
-Refatorar `src/lib/store/index.ts`: trocar Zustand+localStorage por server functions com `requireSupabaseAuth`:
-- `src/lib/clientes.functions.ts`, `orcamentos.functions.ts`, `empresa.functions.ts`
-- Hooks atualizados (`useClientes`, `useOrcamentos`, `useEmpresa`) usando TanStack Query
-- Todas as queries filtram automaticamente por `user_id` via RLS
-
-## 6. UI auxiliar
-
-- `__root.tsx`: registrar `onAuthStateChange` (invalida queries) + bearer attacher em `start.ts`
-- Sidebar: mostrar nome do usuário + botão **Sair**
-- Página `configuracoes.tsx`: aba "Minha conta" (nome, telefone, cargo) além de dados da empresa
+### 7. Toques finais mobile
+- Áreas de toque mínimas 44px (botões `size="icon"` já são 40px — manter, ok).
+- `font-size: 16px` em inputs para não dar zoom no iOS (shadcn já faz).
+- Adicionar `<meta name="viewport">` — verificar `__root.tsx` (já deve existir; confirmar).
 
 ## Detalhes técnicos
+- Breakpoints Tailwind padrão: `sm 640`, `md 768`, `lg 1024`.
+- Componente reutilizável `MobileListCard` evita duplicar markup nas 3 listas.
+- Nenhuma mudança de schema/store/auth — puramente UI/CSS.
+- Sem novas dependências.
 
-- `auth-attacher` deve estar registrado em `src/start.ts` `functionMiddleware`
-- Senha mínima de 6 caracteres (Supabase default); validação client-side com zod
-- Sign up usa `emailRedirectTo: window.location.origin`
-- Manter mock data atual apenas como seed opcional (descartar)
-- Dados existentes no localStorage serão perdidos (app ainda em desenvolvimento)
-
-## Fora de escopo
-- Reset de senha (pode ser adicionado depois)
-- Roles/admin (single-user por conta)
-- Multi-tenant/equipes compartilhadas
-
+## Fora do escopo
+- PWA / instalação offline.
+- Reescrita visual / nova identidade.
+- Mudanças em lógica de negócio.
