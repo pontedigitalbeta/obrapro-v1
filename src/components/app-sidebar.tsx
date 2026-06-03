@@ -1,5 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Users, FileText, Settings, HardHat, LogOut, User } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Settings, LogOut, User } from "lucide-react";
+import logoFull from "@/assets/obrapro-logo.png.asset.json";
+import logoIcon from "@/assets/obrapro-icon.png.asset.json";
 import { useEffect, useState } from "react";
 import {
   Sidebar,
@@ -60,14 +62,9 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 py-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground">
-            <HardHat className="h-5 w-5" />
-          </div>
+          <img src={logoIcon.url} alt="ObraPro" className="h-9 w-9 shrink-0 rounded-md object-contain" />
           {!collapsed && (
-            <div className="flex flex-col leading-tight">
-              <span className="text-sm font-bold text-sidebar-foreground">ObraPro</span>
-              <span className="text-xs text-sidebar-foreground/70">Orçamentos</span>
-            </div>
+            <img src={logoFull.url} alt="ObraPro Orçamentos" className="h-7 w-auto object-contain" />
           )}
         </div>
       </SidebarHeader>

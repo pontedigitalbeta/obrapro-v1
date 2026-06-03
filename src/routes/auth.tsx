@@ -1,7 +1,8 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { HardHat, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import logoFull from "@/assets/obrapro-logo.png.asset.json";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
@@ -107,13 +108,8 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-6 flex flex-col items-center gap-3 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-            <HardHat className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">ObraPro Orçamentos</h1>
-            <p className="text-sm text-muted-foreground">Crie e envie orçamentos profissionais de obra</p>
-          </div>
+          <img src={logoFull.url} alt="ObraPro Orçamentos" className="h-20 w-auto object-contain" />
+          <p className="text-sm text-muted-foreground">Crie e envie orçamentos profissionais de obra</p>
         </div>
 
         <Card>

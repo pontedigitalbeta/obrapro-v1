@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { HardHat } from "lucide-react";
+import logoIcon from "@/assets/obrapro-icon.png.asset.json";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CATEGORIA_LABELS, type ItemCategoria, type Orcamento, type Cliente, type Empresa } from "@/lib/types";
@@ -28,9 +28,7 @@ export function PropostaA4({ orcamento, cliente, empresa }: Props) {
           {empresa.logoBase64 ? (
             <img src={empresa.logoBase64} alt={empresa.nome} className="h-14 w-14 rounded object-contain sm:h-16 sm:w-16" />
           ) : (
-            <div className="flex h-14 w-14 items-center justify-center rounded bg-slate-800 text-amber-400 sm:h-16 sm:w-16">
-              <HardHat className="h-7 w-7 sm:h-8 sm:w-8" />
-            </div>
+            <img src={logoIcon.url} alt="ObraPro" className="h-14 w-14 rounded object-contain sm:h-16 sm:w-16" />
           )}
           <div className="min-w-0">
             <h1 className="truncate text-lg font-bold text-slate-800 sm:text-xl">{empresa.nome}</h1>
