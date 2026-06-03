@@ -5,7 +5,6 @@ import { PropostaA4 } from "@/components/proposta-a4";
 
 // A4 @ 96dpi
 const A4_W_PX = 794;
-const A4_H_PX = 1123;
 // margins in mm (jsPDF unit)
 const MARGIN_TOP_MM = 12;
 const MARGIN_BOTTOM_MM = 14;
