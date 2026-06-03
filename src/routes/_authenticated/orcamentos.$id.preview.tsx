@@ -204,7 +204,7 @@ function PreviewPage() {
 
         {/* Condições */}
         <Section title="Condições comerciais">
-          <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
             {orcamento.prazoExecucao && <Item label="Prazo de execução" value={orcamento.prazoExecucao} />}
             {orcamento.formaPagamento && <Item label="Forma de pagamento" value={orcamento.formaPagamento} />}
             {orcamento.garantia && <Item label="Garantia" value={orcamento.garantia} />}
